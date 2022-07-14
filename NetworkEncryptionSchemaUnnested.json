@@ -1,0 +1,81 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "network_encryption_schema",
+    "title": "Network Encryption Properties",
+    "description": "Network Encryption Properties of the Wireless Sensor Network",
+    "type": "object",
+    "properties": {
+        "encryption": {
+            "description": "Types of encryption protocol being used in the network",
+            "type": "array",
+            "minItems": 1,
+            "items": {
+                "enum": [
+                    "AES",
+                    "Blowfish",
+                    "DES",
+                    "IDEA",
+                    "MD5",
+                    "RC4",
+                    "RC5",
+                    "SEED",
+                    "SHA-1",
+                    "SHA-256",
+                    "SEA"
+                ]
+            },
+            "uniqueItems": true
+        },
+        "authentication": {
+            "description": "Are there any authentication methods in place between the nodes?",
+            "type": "array",
+            "items": {
+                "enum": [
+                    "Lightweight Dynamic User Authentication Scheme",
+                    "Lightweight Trust Model",
+                    "Lightweight Authentication Scheme for WSNs",
+                    "Lightweight Key Management Scheme",
+                    "SPINS",
+                    "LEAP",
+                    "Efficient Authenticated Key Establishment Protocols",
+                    "Authentication and Key Establishment in Dynamic WSNs",
+                    "Broadcast Authentication in WSNs",
+                    "Short-Term Public Key System for Broadcast Authentication",
+                    "Multiuser Broadcast Authentication",
+                    "Lightweight One-Time Signature Scheme",
+                    "Mutual Authentication and Key Establishment Protocol",
+                    "EIBAS",
+                    "Lightweight Authentication Scheme",
+                    "LOCHA",
+                    "Constrained Function-Based Message Authentication",
+                    "Node Level Security Policy Framework",
+                    "Public Key Cryptography-Based Broadcast Authentication Scheme",
+                    "AuCRB",
+                    "Reversible Watermarking Authentication Scheme",
+                    "Key Management Scheme"
+                ]
+            },
+            "uniqueItems": true
+        },
+        "input_sanitisation": {
+            "description": "Are inputs santised before being forwarded to backend systems?",
+            "type": "array",
+            "items": {
+                "enum": [
+                    "heuristic rule",
+                    "temporal correlation",
+                    "spatial correlation",
+                    "chauvenet's criterion",
+                    "modified z-score method"
+                ]
+            },
+            "uniqueItems": true
+        }
+    },
+    "additionalProperties": false,
+    "required": [
+        "encryption",
+        "authentication",
+        "input_sanitisation"
+    ]
+}

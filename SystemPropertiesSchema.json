@@ -1,0 +1,95 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "system_properties_schema",
+    "title": "Software and System Operation Properties",
+    "description": "Software and System Operation Properties of a sensor in a Wireless Sensor Network",
+    "type": "object",
+    "properties": {
+        "operating_system": {
+            "description": "What operating system is the sensor on?",
+            "type": "object",
+            "properties": {
+                "operating_system": {
+                    "type": "string"
+                }
+            }
+        },
+        "software_version": {
+            "description": "What software version is the sensor on?",
+            "type": "object",
+            "properties": {
+                "software_version": {
+                    "type": "string"
+                }
+            }
+        },
+        "firmware_version": {
+            "description": "What firmware is the sensor on?",
+            "type": "object",
+            "properties": {
+                "firmware_version": {
+                    "type": "string"
+                }
+            }
+        },
+        "interfaces": {
+            "description": "List of available interfaces that can connect e.g. graphical or command line",
+            "type": "object",
+            "properties": {
+                "interfaces": {
+                    "type": "array"
+                }
+            }
+        },
+        "administration": {
+            "description": "How is the device maintained? Remote or Physical",
+            "type": "object",
+            "properties": {
+                "administration": {
+                    "enum": [
+                        "remote",
+                        "physical"
+                    ]
+                }
+            }
+        },
+        "update_process": {
+            "description": "Indicates how and if updates are recieved. Are they checked against a hash?",
+            "type": "object",
+            "properties": {
+                "update_process": {
+                    "type": "string"
+                }
+            }
+        },
+        "reset_functionality": {
+            "description": "Indicates if the device can be reset to initial settings if required",
+            "type": "object",
+            "properties": {
+                "reset_functionality": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "shared_resources": {
+            "description": "Indicates if resources are shared with other users/processes",
+            "type": "object",
+            "properties": {
+                "operating_system": {
+                    "type": "boolean"
+                }
+            }
+        }
+    },
+    "additionalProperties": false,
+    "required": [
+        "operating_system",
+        "software_version",
+        "firmware_version",
+        "interfaces",
+        "administration",
+        "update_process",
+        "reset_functionality",
+        "shared_resources"
+    ]
+}

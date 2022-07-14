@@ -1,0 +1,337 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "description": "Software and System Operation Properties of a sensor in a Wireless Sensor Network",
+    "type": "object",
+    "properties": {
+        "operating_system": {
+            "description": "What operating system is the sensor on?",
+            "type": "object",
+            "properties": {
+                "operating_system": {
+                    "type": "string"
+                }
+            }
+        },
+        "software_version": {
+            "description": "What software version is the sensor on?",
+            "type": "object",
+            "properties": {
+                "software_version": {
+                    "type": "string"
+                }
+            }
+        },
+        "firmware_version": {
+            "description": "What firmware is the sensor on?",
+            "type": "object",
+            "properties": {
+                "firmware_version": {
+                    "type": "string"
+                }
+            }
+        },
+        "interfaces": {
+            "description": "List of available interfaces that can connect e.g. graphical or command line",
+            "type": "object",
+            "properties": {
+                "interfaces": {
+                    "type": "array"
+                }
+            }
+        },
+        "administration": {
+            "description": "How is the device maintained? Remote or Physical",
+            "type": "object",
+            "properties": {
+                "administration": {
+                    "enum": [
+                        "remote",
+                        "physical"
+                    ]
+                }
+            }
+        },
+        "update_process": {
+            "description": "Indicates how and if updates are recieved. Are they checked against a hash?",
+            "type": "object",
+            "properties": {
+                "update_process": {
+                    "type": "string"
+                }
+            }
+        },
+        "reset_functionality": {
+            "description": "Indicates if the device can be reset to initial settings if required",
+            "type": "object",
+            "properties": {
+                "reset_functionality": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "shared_resources": {
+            "description": "Indicates if resources are shared with other users/processes",
+            "type": "object",
+            "properties": {
+                "operating_system": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "secure_key_storage": {
+            "description": "Indicates if key store is available such as Secure Element, Hardware Security Module or Trusted Platform Module",
+            "type": "object",
+            "properties": {
+                "secure_key_storage": {
+                    "type": "string"
+                }
+            }
+        },
+        "data_storage": {
+            "description": "Indicates if data is stored on the device",
+            "type": "object",
+            "properties": {
+                "data_storage": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "power_consumption": {
+            "description": "Indicates nominal power consumption of the unit (kWh)",
+            "type": "object",
+            "properties": {
+                "power_consumption": {
+                    "type": "string"
+                }
+            }
+        },
+        "electromagnetic_emission": {
+            "description": "Indicates the nominal EM emissions expected from the unit",
+            "type": "object",
+            "properties": {
+                "electromagnetic_emission": {
+                    "type": "string"
+                }
+            }
+        },
+        "sensor_id": {
+            "type": "object",
+            "properties": {
+                "sensor_id": {
+                    "type": "string",
+                    "description": "Assigned ID number within the network",
+                    "uniqueItem": "true",
+                    "min": 1
+                }
+            }
+        },
+        "ip_address": {
+            "description": "IP Address identifier of Sensor within WSN",
+            "type": "object",
+            "properties": {
+                "ip_address": {
+                    "type": "string",
+                    "uniqueItem": "true",
+                    "pattern": "^(?:[0-9]{1,3}\\.){3}[0-9]{1,3}$"
+                }
+            }
+        },
+        "mac_address": {
+            "description": "MAC Address identifier of Sensor within WSN",
+            "type": "object",
+            "properties": {
+                "mac_address": {
+                    "type": "string",
+                    "uniqueItem": "true",
+                    "pattern": "^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})|([0-9a-fA-F]{4}\\.[0-9a-fA-F]{4}\\.[0-9a-fA-F]{4})$”"
+                }
+            }
+        },
+        "hardware_interface": {
+            "description": "Indicates all available interfaces (i.e. USB, FireWire, Ethernet, ATA/IDE, SCSI and PCI)",
+            "type": "object",
+            "properties": {
+                "hardware_interface": {
+                    "type": "array",
+                    "items": {
+                        "enum": [
+                            "USB",
+                            "FireWire",
+                            "Ethernet",
+                            "ATA/IDE",
+                            "SCSI",
+                            "PCI"
+                        ]
+                    },
+                    "uniqueItems": true
+                }
+            }
+        },
+        "connection_type": {
+            "description": "Indicates network type (wireless, wired) and communication protocol (WiFi, Bluetooth, NFC)",
+            "type": "object",
+            "properties": {
+                "wired_wireless": {
+                    "enum": [
+                        "wired",
+                        "wireless"
+                    ]
+                },
+                "communication_protocol": {
+                    "enum": [
+                        "WiFi",
+                        "Bluetooth",
+                        "NFC"
+                    ]
+                }
+            }
+        },
+        "network_protocols": {
+            "description": "Lists all available network protocols",
+            "type": "object",
+            "properties": {
+                "network_protocols": {
+                    "type": "array"
+                }
+            }
+        },
+        "protocol_version": {
+            "description": "Lists protocol versions for avaiable protocols.",
+            "type": "object",
+            "properties": {
+                "protocol_version": {
+                    "type": "array"
+                }
+            }
+        },
+        "pairing_process": {
+            "description": "Indicates how device connects to other devices (clustering algorithm etc.)",
+            "type": "object",
+            "properties": {
+                "pairing_process": {
+                    "type": "array",
+                    "items": {
+                        "enum": [
+                            "LEACH",
+                            "HEED",
+                            "ULEACH",
+                            "UHEED",
+                            "EEUC",
+                            "UCLA",
+                            "EDUC",
+                            "EAUFC",
+                            "EEFMC",
+                            "HADCC",
+                            "H K-mean"
+                        ]
+                    },
+                    "uniqueItems": true
+                }
+            }
+        },
+        "connected_sensors": {
+            "description": "Indicates which devices in the network the device is connected to",
+            "type": "object",
+            "properties": {
+                "connected_sensors": {
+                    "type": "array"
+                }
+            }
+        },
+        "encryption": {
+            "description": "Types of encryption protocol being used in the network",
+            "type": "object",
+            "minItems": 1,
+            "properties": {
+                "encryption": {
+                    "enum": [
+                        "AES",
+                        "Blowfish",
+                        "DES",
+                        "IDEA",
+                        "MD5",
+                        "RC4",
+                        "RC5",
+                        "SEED",
+                        "SHA-1",
+                        "SHA-256",
+                        "SEA"
+                    ]
+                }
+            }
+        },
+        "authentication": {
+            "description": "Are there any authentication methods in place between the nodes?",
+            "type": "object",
+            "properties": {
+                "authentication": {
+                    "enum": [
+                        "Lightweight Dynamic User Authentication Scheme",
+                        "Lightweight Trust Model",
+                        "Lightweight Authentication Scheme for WSNs",
+                        "Lightweight Key Management Scheme",
+                        "SPINS",
+                        "LEAP",
+                        "Efficient Authenticated Key Establishment Protocols",
+                        "Authentication and Key Establishment in Dynamic WSNs",
+                        "Broadcast Authentication in WSNs",
+                        "Short-Term Public Key System for Broadcast Authentication",
+                        "Multiuser Broadcast Authentication",
+                        "Lightweight One-Time Signature Scheme",
+                        "Mutual Authentication and Key Establishment Protocol",
+                        "EIBAS",
+                        "Lightweight Authentication Scheme",
+                        "LOCHA",
+                        "Constrained Function-Based Message Authentication",
+                        "Node Level Security Policy Framework",
+                        "Public Key Cryptography-Based Broadcast Authentication Scheme",
+                        "AuCRB",
+                        "Reversible Watermarking Authentication Scheme",
+                        "Key Management Scheme"
+                    ]
+                }
+            }
+        },
+        "input_sanitisation": {
+            "description": "Are inputs santised before being forwarded to backend systems?",
+            "type": "object",
+            "properties": {
+                "input_sanitisation": {
+                    "enum": [
+                        "heuristic rule",
+                        "temporal correlation",
+                        "spatial correlation",
+                        "chauvenet's criterion",
+                        "modified z-score method"
+                    ]
+                }
+            }
+        }
+    },
+    "additionalProperties": false,
+    "required": [
+        "operating_system",
+        "software_version",
+        "firmware_version",
+        "interfaces",
+        "administration",
+        "update_process",
+        "reset_functionality",
+        "shared_resources",
+        "electromagnetic_emission",
+        "data_storage",
+        "power_consumption",
+        "secure_key_storage",
+        "ip_address",
+        "mac_address",
+        "hardware_interface",
+        "connection_type",
+        "network_protocols",
+        "protocol_version",
+        "pairing_process",
+        "connected_sensors",
+        "encryption",
+        "authentication",
+        "input_sanitisation"
+    ]
+}

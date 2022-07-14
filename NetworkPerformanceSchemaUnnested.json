@@ -1,0 +1,31 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "network_performance_schema",
+    "title": "Network Performance Properties",
+    "description": "Network Performance Properties of the Wireless Sensor Network",
+    "properties": {
+        "bandwidth": {
+            "description": "Indicates maximum rate of network packets over a given period",
+            "type": "string"
+        },
+        "throughput": {
+            "description": "Indicates actual rate of network packets sent over a given period",
+            "type": "string"
+        },
+        "latency": {
+            "description": "Delay of packets between being sent from source and arriving at destination",
+            "type": "string"
+        },
+        "error_rate": {
+            "description": "Number of corrupted bits as a % of total bits sent",
+            "type": "string"
+        }
+    },
+    "additionalProperties": false,
+    "required": [
+        "bandwidth",
+        "throughput",
+        "latency",
+        "error_rate"
+    ]
+}

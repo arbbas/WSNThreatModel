@@ -1,0 +1,32 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "hardware_properties_schema",
+    "title": "Hardware Properties",
+    "description": "Hardware Properties of a sensor in a Wireless Sensor Network",
+    "type": "object",
+    "properties": {
+        "secure_key_storage": {
+            "description": "Indicates if key store is available such as Secure Element, Hardware Security Module or Trusted Platform Module",
+            "type": "string"
+        },
+        "data_storage": {
+            "description": "Indicates if data is stored on the device",
+            "type": "boolean"
+        },
+        "power_consumption": {
+            "description": "Indicates nominal power consumption of the unit (kWh)",
+            "type": "string"
+        },
+        "electromagnetic_emission": {
+            "description": "Indicates the nominal EM emissions expected from the unit",
+            "type": "string"
+        }
+    },
+    "additionalProperties": false,
+    "required": [
+        "electromagnetic_emission",
+        "data_storage",
+        "power_consumption",
+        "secure_key_storage"
+    ]
+}

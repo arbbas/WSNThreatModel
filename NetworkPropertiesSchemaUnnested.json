@@ -1,0 +1,114 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "network_properties_schema",
+    "title": "Network Properties",
+    "type": "object",
+    "description": "Network properties of a sensor in a Wireless Sensor Network",
+    "properties": {
+        "sensor_id": {
+            "type": "string",
+            "description": "Assigned ID number within the network",
+            "uniqueItem": "true",
+            "min": 1
+        },
+        "ip_address": {
+            "description": "IP Address identifier of Sensor within WSN",
+            "type": "string",
+            "uniqueItem": "true",
+            "pattern": "^(?:[0-9]{1,3}\\.){3}[0-9]{1,3}$"
+        },
+        "mac_address": {
+            "description": "MAC Address identifier of Sensor within WSN",
+            "type": "string",
+            "uniqueItem": "true",
+            "pattern": "^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})|([0-9a-fA-F]{4}\\.[0-9a-fA-F]{4}\\.[0-9a-fA-F]{4})$”"
+        },
+        "connection_type": {
+            "description": "Indicates network type (wireless, wired) and communication protocol (WiFi, Bluetooth, NFC)",
+            "type": "object",
+            "properties": {
+                "wired_wireless": {
+                    "enum": [
+                        "wired",
+                        "wireless"
+                    ]
+                },
+                "communication_protocol": {
+                    "enum": [
+                        "WiFi",
+                        "Bluetooth",
+                        "NFC"
+                    ]
+                }
+            }
+        },
+        "hardware_interface": {
+            "description": "Indicates all available interfaces (i.e. USB, FireWire, Ethernet, ATA/IDE, SCSI and PCI)",
+            "type": "array",
+            "items": {
+                "enum": [
+                    "USB",
+                    "FireWire",
+                    "Ethernet",
+                    "ATA/IDE",
+                    "SCSI",
+                    "PCI"
+                ]
+            },
+            "uniqueItems": true
+        },
+        "network_protocols": {
+            "description": "Lists all available network protocols",
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
+        },
+        "protocol_version": {
+            "description": "Lists protocol versions for avaiable protocols.",
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
+        },
+        "pairing_process": {
+            "description": "Indicates how device connects to other devices (clustering algorithm etc.)",
+            "type": "array",
+            "items": {
+                "enum": [
+                    "LEACH",
+                    "HEED",
+                    "ULEACH",
+                    "UHEED",
+                    "EEUC",
+                    "UCLA",
+                    "EDUC",
+                    "EAUFC",
+                    "EEFMC",
+                    "HADCC",
+                    "H K-mean"
+                ]
+            },
+            "uniqueItems": true
+        },
+        "connected_sensors": {
+            "description": "Indicates which devices in the network the device is connected to",
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
+        }
+    },
+    "additionalProperties": false,
+    "required": [
+        "sensor_id",
+        "ip_address",
+        "mac_address",
+        "hardware_interface",
+        "connection_type",
+        "network_protocols",
+        "protocol_version",
+        "pairing_process",
+        "connected_sensors"
+    ]
+}
