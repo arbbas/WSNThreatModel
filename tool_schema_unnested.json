@@ -118,25 +118,10 @@
             "type": "array",
             "items": {
                 "enum": [
-                    "Lightweight Dynamic User Authentication Scheme",
                     "SPINS",
                     "LEAP",
-                    "Efficient Authenticated Key Establishment Protocols",
-                    "Authentication and Key Establishment in Dynamic WSNs",
-                    "Broadcast Authentication in WSNs",
-                    "Short-Term Public Key System for Broadcast Authentication",
-                    "Multiuser Broadcast Authentication",
-                    "Lightweight One-Time Signature Scheme",
-                    "Mutual Authentication and Key Establishment Protocol",
                     "EIBAS",
-                    "Lightweight Authentication Scheme",
-                    "LOCHA",
-                    "Constrained Function-Based Message Authentication",
-                    "Node Level Security Policy Framework",
-                    "Public Key Cryptography-Based Broadcast Authentication Scheme",
-                    "AuCRB",
-                    "Reversible Watermarking Authentication Scheme",
-                    "Key Management Scheme"
+                    "LOCHA"
                 ]
             },
             "uniqueItems": true
@@ -150,14 +135,29 @@
                     "temporal correlation",
                     "spatial correlation",
                     "chauvenet's criterion",
-                    "modified z-score method"
+                    "modified z-score method",
+                    "None"
                 ]
             },
             "uniqueItems": true
         },
         "secure_key_storage": {
             "description": "Indicates if key store is available such as Secure Element, Hardware Security Module or Trusted Platform Module",
-            "type": "string"
+            "type": "array",
+            "items": {
+                "items": {
+                    "enum": [
+                        "Secure Element",
+                        "Hardware Security Module",
+                        "Trusted Platform Module",
+                        "Mobile Trusted Module",
+                        "None"
+                    ]
+            }
+        },
+        "secure_boot": {
+            "description": "Is the boot process of the device secure?",
+            "type": "boolean"
         },
         "data_storage": {
             "description": "Indicates if data is stored on the device",
@@ -212,7 +212,7 @@
             ]
         },
         "update_process": {
-            "description": "Indicates how and if updates are recieved. Are they checked against a hash?",
+            "description": "Indicates how and if updates are received. Are they checked against a hash?",
             "type": "string"
         },
         "reset_functionality": {
