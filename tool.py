@@ -1,10 +1,8 @@
 import json
 import jsonschema
-import pprint
 from jsonschema import validate
 from jsonschema import Draft202012Validator
-from collections import namedtuple
-from json import JSONEncoder
+import rule_engine
 
 
 class Sensor(object):
@@ -85,8 +83,8 @@ def validate_json(json_data):
     return True, valid_message
 
 
-sensors = []
 sensorList = []
+sensors = []
 
 with open('input.txt', 'r', encoding='utf-8') as inp:
     for jsonObj in inp:
@@ -96,21 +94,63 @@ with open('input.txt', 'r', encoding='utf-8') as inp:
 isValid, msg = validate_json(sensorDict)
 print(msg)
 
-sensor_1 = sensorList[0]
-sensor_1_obj = Sensor(**sensor_1)
-sensor_2 = sensorList[1]
-sensor_2_obj = Sensor(**sensor_2)
-sensor_3 = sensorList[2]
-sensor_3_obj = Sensor(**sensor_3)
-sensor_4 = sensorList[3]
-sensor_4_obj = Sensor(**sensor_4)
-sensor_5 = sensorList[4]
-sensor_5_obj = Sensor(**sensor_5)
+# sensor_1 = sensorList[0]
+# sensor_1_obj = Sensor(**sensor_1)
+# sensors.append(sensor_1_obj)
+# sensor_2 = sensorList[1]
+# sensor_2_obj = Sensor(**sensor_2)
+# sensor_3 = sensorList[2]
+# sensor_3_obj = Sensor(**sensor_3)
+# sensor_4 = sensorList[3]
+# sensor_4_obj = Sensor(**sensor_4)
+# sensor_5 = sensorList[4]
+# sensor_5_obj = Sensor(**sensor_5)
 
-print(sensor_1_obj.ip_address)
-print(sensor_2_obj.authentication)
 
-# for i in sensorList:
-#     sensor_a = sensorList[i]
-#     sensors = Sensor(**sensor_a)
-#     print(sensors)
+def node_capturing_rule_1():
+    rule_1 = rule_engine.Rule(
+        'data_storage == true'
+    )
+
+    filter_1 = rule_1.filter(sensorList)
+
+    print("-" * 80)
+    print("Sensor vulnerability found: Data stored on device")
+    print()
+    print("Threat: Node capturing - if node captured data might be obtained by an adversary")
+    print()
+    print("Control: Please make sure data is encrypted if possible")
+    print()
+    print("Affected Sensors:")
+    for sensor in filter_1:
+        print(sensor['sensor_id'])
+
+    print("-" * 80)
+
+
+def anti_tamper_rule():
+    rule_1 = rule_engine.Rule(
+        'anti_tamper_destruction == false'
+    )
+
+    filter_1 = rule_1.filter(sensorList)
+
+    print("-" * 80)
+    print("Sensor vulnerability found: Sensor not tamper proof")
+    print()
+    print("Threat: Node capturing - if node captured data might be obtained by an adversary")
+    print("Threat: Denial of Service Attack - Should the sensor be a cluster head, "
+          "this may cause data to not reach the sink. \nData from important sensors"
+          "may also be lost")
+    print()
+    print("Control: Install a sensor with a tamper resistance mechanism")
+    print()
+    print("Affected Sensors:")
+    for sensor in filter_1:
+        print(sensor['sensor_id'])
+
+    print("-" * 80)
+
+
+node_capturing_rule_1()
+anti_tamper_rule()

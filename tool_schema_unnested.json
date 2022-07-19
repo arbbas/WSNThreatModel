@@ -6,9 +6,8 @@
     "description": "Network properties of a sensor in a Wireless Sensor Network",
     "properties": {
         "sensor_id": {
-            "type": "string",
+            "type": "array",
             "description": "Assigned ID number within the network",
-            "uniqueItem": "true",
             "min": 1
         },
         "ip_address": {
@@ -24,13 +23,15 @@
             "pattern": "^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})|([0-9a-fA-F]{4}\\.[0-9a-fA-F]{4}\\.[0-9a-fA-F]{4})$”"
         },
         "connection_type": {
-            "description": "Indicates network type (wireless, wired) and communication protocol (WiFi, Bluetooth, NFC)",
+            "description": "Communication protocol (WiFi, Bluetooth, NFC)",
             "type": "array",
             "items": {
                 "enum": [
                     "WiFi",
                     "Bluetooth",
-                    "NFC"
+                    "NFC",
+                    "Zigbee",
+                    "MiWi"
                 ]
             },
             "uniqueItems": true
@@ -118,9 +119,6 @@
             "items": {
                 "enum": [
                     "Lightweight Dynamic User Authentication Scheme",
-                    "Lightweight Trust Model",
-                    "Lightweight Authentication Scheme for WSNs",
-                    "Lightweight Key Management Scheme",
                     "SPINS",
                     "LEAP",
                     "Efficient Authenticated Key Establishment Protocols",
@@ -223,6 +221,14 @@
         },
         "shared_resources": {
             "description": "Indicates if resources are shared with other users/processes",
+            "type": "boolean"
+        },
+        "anti_tamper_destruction": {
+            "description": "Indicates if the node has physical tamper sensing which will make the memory self-destruct when sensed",
+            "type": "boolean"
+        },
+        "accessible_battery_data": {
+            "description": "Does the sensor broadcast its battery levels when low?",
             "type": "boolean"
         }
     },
