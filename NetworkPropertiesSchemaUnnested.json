@@ -57,7 +57,7 @@
             },
             "uniqueItems": true
         },
-        "network_protocols": {
+        "network_routing_protocols": {
             "description": "Lists all available network protocols",
             "type": "array",
             "items": {

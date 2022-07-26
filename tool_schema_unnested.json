@@ -51,11 +51,16 @@
             },
             "uniqueItems": true
         },
-        "network_protocols": {
-            "description": "Lists all available network protocols",
+        "network_routing_protocols": {
+            "description": "Lists all available network/clustering protocols",
             "type": "array",
             "items": {
-                "type": "string"
+                "type": "string",
+                "enum": [
+                    "XMesh",
+                    "LEACH",
+                    "HEED"
+                ]
             }
         },
         "protocol_version": {
@@ -64,26 +69,6 @@
             "items": {
                 "type": "string"
             }
-        },
-        "pairing_process": {
-            "description": "Indicates how device connects to other devices (clustering algorithm etc.)",
-            "type": "array",
-            "items": {
-                "enum": [
-                    "LEACH",
-                    "HEED",
-                    "ULEACH",
-                    "UHEED",
-                    "EEUC",
-                    "UCLA",
-                    "EDUC",
-                    "EAUFC",
-                    "EEFMC",
-                    "HADCC",
-                    "H K-mean"
-                ]
-            },
-            "uniqueItems": true
         },
         "connected_sensors": {
             "description": "Indicates which devices in the network the device is connected to",
@@ -136,7 +121,7 @@
                     "spatial correlation",
                     "chauvenet's criterion",
                     "modified z-score method",
-                    "None"
+                    "none"
                 ]
             },
             "uniqueItems": true
@@ -145,14 +130,13 @@
             "description": "Indicates if key store is available such as Secure Element, Hardware Security Module or Trusted Platform Module",
             "type": "array",
             "items": {
-                "items": {
-                    "enum": [
-                        "Secure Element",
-                        "Hardware Security Module",
-                        "Trusted Platform Module",
-                        "Mobile Trusted Module",
-                        "None"
-                    ]
+                "enum": [
+                    "Secure Element",
+                    "Hardware Security Module",
+                    "Trusted Platform Module",
+                    "Mobile Trusted Module",
+                    "none"
+                ]
             }
         },
         "secure_boot": {
@@ -189,11 +173,28 @@
         },
         "operating_system": {
             "description": "What operating system is the sensor on?",
-            "type": "string"
+            "type": "string",
+            "enum": [
+                "Tiny OS",
+                "Mantis",
+                "Contiki",
+                "Windows",
+                "Ubuntu",
+                "Debian"
+            ]
         },
         "software_version": {
             "description": "What software version is the sensor on?",
             "type": "string"
+        },
+        "dependencies": {
+            "description": "Are there any vulnerable dependencies running? ",
+            "type": "array",
+            "items": {
+                "enum": [
+                    "PASS"
+                ]
+            }
         },
         "firmware_version": {
             "description": "What firmware is the sensor on?",
@@ -212,8 +213,13 @@
             ]
         },
         "update_process": {
-            "description": "Indicates how and if updates are received. Are they checked against a hash?",
-            "type": "string"
+            "description": "Indicates how and if updates are received.",
+            "type": "string",
+            "enum": [
+                "remote",
+                "physical",
+                "none"
+            ]
         },
         "reset_functionality": {
             "description": "Indicates if the device can be reset to initial settings if required",
@@ -239,9 +245,8 @@
         "mac_address",
         "hardware_interface",
         "connection_type",
-        "network_protocols",
+        "network_routing_protocols",
         "protocol_version",
-        "pairing_process",
         "connected_sensors",
         "encryption",
         "authentication",
@@ -261,6 +266,9 @@
         "administration",
         "update_process",
         "reset_functionality",
-        "shared_resources"
+        "shared_resources",
+        "accessible_battery_data",
+        "anti_tamper_destruction",
+        "secure_boot"
     ]
 }

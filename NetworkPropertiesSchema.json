@@ -76,11 +76,11 @@
                 }
             }
         },
-        "network_protocols": {
+        "network_routing_protocols": {
             "description": "Lists all available network protocols",
             "type": "object",
             "properties": {
-                "network_protocols": {
+                "network_routing_protocols": {
                     "type": "array"
                 }
             }

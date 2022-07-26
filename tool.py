@@ -3,55 +3,18 @@ import jsonschema
 from jsonschema import validate
 from jsonschema import Draft202012Validator
 import rule_engine
+from cvss import CVSS3
 
 
-# class Sensor(object):
-#     def __init__(self, sensor_id, ip_address, mac_address, hardware_interface, connection_type,
-#                  network_protocols, protocol_version, pairing_process, secure_key_storage,
-#                  data_storage, power_consumption, electromagnetic_emission, operating_system,
-#                  software_version, firmware_version, interfaces, administration, update_process,
-#                  reset_functionality, shared_resources, connected_sensors, encryption, authentication,
-#                  input_sanitisation, bandwidth, throughput, latency, error_rate):
-#         self.sensor_id = sensor_id
-#         self.ip_address = ip_address
-#         self.mac_address = mac_address
-#         self.hardware_interface = hardware_interface
-#         self.connection_type = connection_type
-#         self.network_protocols = network_protocols
-#         self.protocol_version = protocol_version
-#         self.pairing_process = pairing_process
-#         self.secure_key_storage = secure_key_storage
-#         self.data_storage = data_storage
-#         self.power_consumption = power_consumption
-#         self.electromagnetic_emission = electromagnetic_emission
-#         self.operating_system = operating_system
-#         self.software_version = software_version
-#         self.firmware_version = firmware_version
-#         self.interfaces = interfaces
-#         self.administration = administration
-#         self.update_process = update_process
-#         self.reset_functionality = reset_functionality
-#         self.shared_resources = shared_resources
-#         self.connected_sensors = connected_sensors
-#         self.encryption = encryption
-#         self.authentication = authentication
-#         self.input_sanitisation = input_sanitisation
-#         self.bandwidth = bandwidth
-#         self.throughput = throughput
-#         self.latency = latency
-#         self.error_rate = error_rate
-
-
-# class Network(object):
-#     def __init__(self, encryption, authentication, input_sanitisation,
-#                  bandwidth, throughput, latency, error_rate):
-#         self.encryption = encryption
-#         self.authentication = authentication
-#         self.input_sanitisation = input_sanitisation
-#         self.bandwidth = bandwidth
-#         self.throughput = throughput
-#         self.latency = latency
-#         self.error_rate = error_rate
+def cvss_calc(vector):
+    print()
+    print("Vulnerability Level:")
+    print()
+    c = CVSS3(vector)
+    print(c.clean_vector())
+    print("Base vulnerability score: ", c.base_score)
+    sev = c.severities()
+    print("Vulnerability Level: ", sev[0])
 
 
 def source_schema():
@@ -83,28 +46,17 @@ def validate_json(json_data):
     return True, valid_message
 
 
-sensorList = []
+sensor_list = []  # contains list of sensors appended from dict below
 
+# opens input and loops through the dict objects before appending to list
 with open('input.txt', 'r', encoding='utf-8') as inp:
     for jsonObj in inp:
-        sensorDict = json.loads(jsonObj)
-        sensorList.append(sensorDict)
+        sensor_dict = json.loads(jsonObj)
+        sensor_list.append(sensor_dict)
 
-isValid, msg = validate_json(sensorDict)
+# informs if JSON parsed is valid and will print issues if not
+isValid, msg = validate_json(sensor_dict)
 print(msg)
-
-
-# sensor_1 = sensorList[0]
-# sensor_1_obj = Sensor(**sensor_1)
-# sensors.append(sensor_1_obj)
-# sensor_2 = sensorList[1]
-# sensor_2_obj = Sensor(**sensor_2)
-# sensor_3 = sensorList[2]
-# sensor_3_obj = Sensor(**sensor_3)
-# sensor_4 = sensorList[3]
-# sensor_4_obj = Sensor(**sensor_4)
-# sensor_5 = sensorList[4]
-# sensor_5_obj = Sensor(**sensor_5)
 
 
 def node_capturing_rules():
@@ -112,20 +64,23 @@ def node_capturing_rules():
         'data_storage == true'
     )
 
-    filter_1 = node_rule_1.filter(sensorList)
+    filter_node_rule_1 = tuple(node_rule_1.filter(sensor_list))
 
-    print("-" * 100)
-    print("Sensor vulnerability found: Data stored on device")
-    print()
-    print("Threat: Node capturing - if node captured data might be obtained by an adversary")
-    print()
-    print("Control: Please make sure data is encrypted if possible")
-    print()
-    print("Affected Sensors:")
-    for sensor in filter_1:
-        print(sensor['sensor_id'])
+    if filter_node_rule_1:
+        print("-" * 100)
+        print("Sensor vulnerability found: Data stored on device")
+        print()
+        print("Threat: Node capturing - if node captured data might be obtained by an adversary")
+        print()
+        print("Control: Please make sure data on device is encrypted if possible")
+        print()
+        for sensor in filter_node_rule_1:
+            print("Affected Sensor:")
+            print(sensor['sensor_id'])
+            print("Connected sensors to {0} that may be at risk:".format(sensor['sensor_id']))
+            print(sensor['connected_sensors'])
 
-    print("-" * 100)
+        print("-" * 100)
 
 
 def anti_tamper_rules():
@@ -133,7 +88,7 @@ def anti_tamper_rules():
         'anti_tamper_destruction == false'
     )
 
-    filter_1 = at_rule_1.filter(sensorList)
+    filter_at_rule_1 = at_rule_1.filter(sensor_list)
 
     print("-" * 100)
     print("Sensor vulnerability found: Sensor not tamper proof")
@@ -145,9 +100,11 @@ def anti_tamper_rules():
     print()
     print("Control: Install a sensor with a secure element that has a tamper resistance mechanism")
     print()
-    print("Affected Sensors:")
-    for sensor in filter_1:
+    for sensor in filter_at_rule_1:
+        print("Affected Sensor:")
         print(sensor['sensor_id'])
+        print("Connected sensors to sensor{0} that may be at risk:".format(sensor['sensor_id']))
+        print(sensor['connected_sensors'])
 
     print("-" * 100)
 
@@ -157,7 +114,7 @@ def battery_information_rule():
         'accessible_battery_data == false'
     )
 
-    filter_1 = battery_rule_1.filter(sensorList)
+    filter_battery_rule_1 = battery_rule_1.filter(sensor_list)
 
     print("-" * 100)
     print("Sensor vulnerability found: Battery information not shared")
@@ -170,18 +127,20 @@ def battery_information_rule():
     print()
     print("Control: Enable battery data transmission if available.")
     print()
-    print("Affected Sensors:")
-    for sensor in filter_1:
+    for sensor in filter_battery_rule_1:
+        print("Affected Sensor:")
         print(sensor['sensor_id'])
+        print("Connected sensors to sensor{0} that may be at risk:".format(sensor['sensor_id']))
+        print(sensor['connected_sensors'])
 
     print("-" * 100)
 
 
 def communication_rules():
     comm_rule_1 = rule_engine.Rule(
-         'connection_type == "MiWi'
-     )
-    filter = comm_rule_1.filter(sensorList)
+        'connection_type == "MiWi"'
+    )
+    filter_comm_rule_1 = comm_rule_1.filter(sensor_list)
 
     print("-" * 100)
     print("Sensor vulnerability found: Sensor using communication protocol 'MiWi'."
@@ -194,13 +153,158 @@ def communication_rules():
     print()
     print("Control: Update all sensors using MiWi to current patched version.")
     print()
-    print("Affected Sensors:")
-    for sensor in filter:
+    for sensor in filter_comm_rule_1:
+        print("Affected Sensor:")
         print(sensor['sensor_id'])
+        print("Connected sensors to sensor{0} that may be at risk:".format(sensor['sensor_id']))
+        print(sensor['connected_sensors'])
 
     print("-" * 100)
+
+
+def boot_rule():
+    boot_rule_1 = rule_engine.Rule(
+        'secure_boot == false'
+    )
+
+    filter_boot_rule_1 = boot_rule_1.filter(sensor_list)
+
+    print("-" * 100)
+    print("Sensor vulnerability found: Sensor does not securely boot")
+    print()
+    print("Threat: Tampering - the device is vulnerable to physical tampering")
+    print("Threat: Node outage - threat actor can upload malicious packages to the"
+          " sensor and cause it to stop working.")
+    print("Threat: Node impersonation - Threat actors will find it much easier to"
+          " capture the node in the boot phase if it is not secure")
+    print()
+    print("Control: Enable secure boot")
+    print()
+    for sensor in filter_boot_rule_1:
+        print("Affected Sensor:")
+        print(sensor['sensor_id'])
+        print("Connected sensors to sensor{0} that may be at risk:".format(sensor['sensor_id']))
+        print(sensor['connected_sensors'])
+
+
+def update_rules():
+    update_rule_1 = rule_engine.Rule(
+        'update_process == "none"'
+    )
+
+    filter_update_rule_1 = tuple(update_rule_1.filter(sensor_list))
+
+    update_rule_2 = rule_engine.Rule(
+        'reset_functionality == false'
+    )
+
+    filter_update_rule_2 = tuple(update_rule_2.filter(sensor_list))
+
+    if filter_update_rule_1:
+        print("-" * 100)
+        print("Sensor vulnerability found: Sensor does not have an update function")
+        print()
+        print("Threat: Should the node have a vulnerability, there is no way to update it. "
+              "This will mean that the node will remain vulnerable until removed from the network")
+        print()
+        print("Control: Make sure all nodes are updatable (physically or remotely) and "
+              "maintain current patches on all nodes where possible.")
+        print()
+        for sensor in filter_update_rule_1:
+            print("Affected Sensor:")
+            print(sensor['sensor_id'])
+            print("Connected sensors to {0} that may be at risk:".format(sensor['sensor_id']))
+            print(sensor['connected_sensors'])
+
+        print("-" * 100)
+
+    if filter_update_rule_2:
+        print("-" * 100)
+        print("Sensor vulnerability found: Sensor does not have a reset")
+        print()
+        print("Threat: Should the node have a vulnerability, there is no way to update it. "
+              "This will mean that the node will remain vulnerable until removed from the network")
+        print()
+        print("Control: Make sure all nodes are resettable (physically or remotely).")
+        print()
+        for sensor in filter_update_rule_2:
+            print("Affected Sensor:")
+            print(sensor['sensor_id'])
+            print("Connected sensors to sensor{0} that may be at risk:".format(sensor['sensor_id']))
+            print(sensor['connected_sensors'])
+
+        cvss_calc('CVSS:3.0/S:U/C:H/I:H/A:L/AV:L/AC:L/PR:L/UI:R')
+
+        print("-" * 100)
+
+
+def routing_protocol_rules():
+    routing_rule_1 = rule_engine.Rule(
+        'network_routing_protocols == ["LEACH"]'
+    )
+
+    filter_routing_rule_1 = tuple(routing_rule_1.filter(sensor_list))
+
+    if filter_routing_rule_1:
+        print("-" * 100)
+        print("Sensor vulnerability found: Sensor using LEACH as a network"
+              " routing protocol")
+        print()
+        print("Threat: LEACH protocol is vulnerable to HELLO flood attacks due to it's "
+              "clustering algorithm. \n\t\tThis is due to it operating a cluster head "
+              "system based on Received Signal Strength (RSS).")
+        print()
+        print("Control: If LEACH is required, please look at using R-LEACH which "
+              "addresses these security requirements.")
+        print()
+        for sensor in filter_routing_rule_1:
+            print("Affected Sensor:")
+            print(sensor['sensor_id'])
+            print("Connected sensors to sensor{0} that may be at risk:".format(sensor['sensor_id']))
+            print(sensor['connected_sensors'])
+
+
+def os_rules():
+    node_rule_1 = rule_engine.Rule(
+        'data_storage == true'
+    )
+
+    filter_node_rule_1 = tuple(node_rule_1.filter(sensor_list))
+
+    ubuntu_rule_1 = rule_engine.Rule(
+        'operating_system == "Ubuntu"'
+    )
+
+    filter_os_rule_1 = tuple(ubuntu_rule_1.filter(sensor_list))
+
+    ubuntu_version_rule_1 = rule_engine.Rule(
+        'software_version == "16.4"'
+    )
+
+    filter_os_rule_2 = tuple(ubuntu_version_rule_1.filter(sensor_list))
+
+    ubuntu_version_rule_2 = rule_engine.Rule(
+        'software_version == 18.04'
+    )
+
+    filter_os_rule_3 = tuple(ubuntu_version_rule_2.filter(sensor_list))
+
+    ubuntu_version_rule_3 = rule_engine.Rule(
+
+    )
+
+    if filter_node_rule_1:
+        if filter_os_rule_1:
+            if filter_os_rule_2:
+                print("Hello")
+
+
 
 
 node_capturing_rules()
 anti_tamper_rules()
 battery_information_rule()
+boot_rule()
+update_rules()
+routing_protocol_rules()
+os_rules()
