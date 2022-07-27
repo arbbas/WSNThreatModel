@@ -192,7 +192,8 @@
             "type": "array",
             "items": {
                 "enum": [
-                    "PASS"
+                    "log4j",
+                    "none"
                 ]
             }
         },
@@ -269,6 +270,7 @@
         "shared_resources",
         "accessible_battery_data",
         "anti_tamper_destruction",
-        "secure_boot"
+        "secure_boot",
+        "dependencies"
     ]
 }
