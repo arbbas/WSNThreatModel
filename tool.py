@@ -505,6 +505,30 @@ def log4j():
         cvss_calc('CVSS:3.0/S:C/C:H/I:H/A:H/AV:N/AC:L/PR:N/UI:N')
 
 
+def authentication_rules():
+    authentication_rule_1 = rule_engine.Rule(
+        'authentication == "LEAP"'
+    )
+
+    filter_authentication_rule_1 = tuple(authentication_rule_1.filter(sensor_list))
+
+    if filter_authentication_rule_1:
+        print("-" * 100)
+        print("Sensor vulnerability found: Sensor using LEAP for authentication. LEAP is vulnerable to dictionary "
+              "attacks.")
+        print("Threat: Attacker can guess default and easily guessable passwords and authenticate themselves on the "
+              "network.")
+        print()
+        print("Control: Please use strong passwords.")
+        for sensor in filter_authentication_rule_1:
+            print("Affected Sensor:")
+            print(sensor['sensor_id'])
+            print("Connected sensors to sensor{0} that may be at risk:".format(sensor['sensor_id']))
+            print(sensor['connected_sensors'])
+
+        print("-" * 100)
+
+
 node_capturing_rules()
 anti_tamper_rules()
 battery_information_rule()
