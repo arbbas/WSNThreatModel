@@ -53,6 +53,7 @@ with open('input.txt', 'r', encoding='utf-8') as inp:
     for jsonObj in inp:
         sensor_dict = json.loads(jsonObj)
         sensor_list.append(sensor_dict)
+    print(sensor_list)
 
 
 # informs if JSON parsed is valid and will print issues if not

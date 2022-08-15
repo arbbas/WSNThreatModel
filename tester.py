@@ -553,7 +553,6 @@ class Redirect:
 # --- main ---
 
 root = tk.Tk()
-root.geometry("800x600")
 root.title("Analyse")
 
 text = tk.Text(root)
