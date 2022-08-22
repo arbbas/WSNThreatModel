@@ -75,7 +75,7 @@ def node_capturing_rules():
     filter_node_rule_1 = tuple(node_rule_1.filter(sensor_list))
 
     if filter_node_rule_1:
-        print("-" * 80)
+        print("-" * 123)
         print("Sensor vulnerability found: Data stored on device")
         print()
         print("Threat: Node capturing - if node captured data might be obtained by an adversary")
@@ -88,7 +88,7 @@ def node_capturing_rules():
             print("Connected sensors to {0} that may be at risk:".format(sensor['sensor_id']))
             print(sensor['connected_sensors'])
 
-        print("-" * 80)
+        print("-" * 123)
 
 
 def anti_tamper_rules():
@@ -99,7 +99,7 @@ def anti_tamper_rules():
     filter_at_rule_1 = tuple(at_rule_1.filter(sensor_list))
 
     if filter_at_rule_1:
-        print("-" * 80)
+        print("-" * 123)
         print("Sensor vulnerability found: Sensor not tamper proof")
         print()
         print("Threat: Node capturing - if node captured data might be obtained by an adversary")
@@ -115,7 +115,7 @@ def anti_tamper_rules():
             print("Connected sensors to sensor{0} that may be at risk:".format(sensor['sensor_id']))
             print(sensor['connected_sensors'])
 
-    print("-" * 80)
+    print("-" * 123)
 
 
 def battery_information_rule():
@@ -126,7 +126,7 @@ def battery_information_rule():
     filter_battery_rule_1 = tuple(battery_rule_1.filter(sensor_list))
 
     if filter_battery_rule_1:
-        print("-" * 80)
+        print("-" * 123)
         print("Sensor vulnerability found: Battery information not shared")
         print()
         print("Threat: Other threats such as Collision, Unfairness and De-synchronisation "
@@ -143,7 +143,7 @@ def battery_information_rule():
             print("Connected sensors to sensor{0} that may be at risk:".format(sensor['sensor_id']))
             print(sensor['connected_sensors'])
 
-        print("-" * 80)
+        print("-" * 123)
 
 
 def communication_rules():
@@ -159,7 +159,7 @@ def communication_rules():
     filter_comm_rule_2 = tuple(comm_rule_2.filter(sensor_list))
 
     if filter_comm_rule_1:
-        print("-" * 80)
+        print("-" * 123)
         print("Sensor vulnerability found: Sensor using communication protocol 'MiWi'."
               " 'MiWi' has an issue with version 6.5 and lower. In 6.5,"
               " full frame counters are validated before message authentication.")
@@ -176,10 +176,10 @@ def communication_rules():
             print("Connected sensors to sensor{0} that may be at risk:".format(sensor['sensor_id']))
             print(sensor['connected_sensors'])
 
-        print("-" * 80)
+        print("-" * 123)
 
     if filter_comm_rule_2:
-        print("-" * 80)
+        print("-" * 123)
         print("Sensor vulnerability found: Sensor using Zigbee as communication "
               "protocol. ZigBee standard provides a default value for link key to ensure interoperability between "
               "ZigBee devices from different manufacturers")
@@ -201,10 +201,10 @@ def communication_rules():
             print("Connected sensors to sensor{0} that may be at risk:".format(sensor['sensor_id']))
             print(sensor['connected_sensors'])
 
-        print("-" * 80)
+        print("-" * 123)
 
     if filter_comm_rule_2:
-        print("-" * 80)
+        print("-" * 123)
         print("Sensor vulnerability found: Sensor using Zigbee as communication protocol. Zigbee is susceptible to "
               "link layer jamming.")
         print()
@@ -222,10 +222,10 @@ def communication_rules():
             print("Connected sensors to sensor{0} that may be at risk:".format(sensor['sensor_id']))
             print(sensor['connected_sensors'])
 
-        print("-" * 80)
+        print("-" * 123)
 
     if filter_comm_rule_2:
-        print("-" * 80)
+        print("-" * 123)
         print("Sensor vulnerability found: Sensor using ZigBee as communication protocol. Zigbee is vulnerable to ACK "
               "spoofing attacks as is does not \nprovide frame integrity and confidentiality protections for "
               "acknowledgment packets. Link layer jamming is required for this attack.")
@@ -242,7 +242,7 @@ def communication_rules():
             print("Connected sensors to sensor{0} that may be at risk:".format(sensor['sensor_id']))
             print(sensor['connected_sensors'])
 
-        print("-" * 80)
+        print("-" * 123)
 
 
 def boot_rule():
@@ -253,7 +253,7 @@ def boot_rule():
     filter_boot_rule_1 = tuple(boot_rule_1.filter(sensor_list))
 
     if filter_boot_rule_1:
-        print("-" * 80)
+        print("-" * 123)
         print("Sensor vulnerability found: Sensor does not securely boot")
         print()
         print("Threat: Tampering - the device is vulnerable to physical tampering")
@@ -285,7 +285,7 @@ def update_rules():
     filter_update_rule_2 = tuple(update_rule_2.filter(sensor_list))
 
     if filter_update_rule_1:
-        print("-" * 80)
+        print("-" * 123)
         print("Sensor vulnerability found: Sensor does not have an update function")
         print()
         print("Threat: Should the node have a vulnerability, there is no way to update it. "
@@ -300,10 +300,10 @@ def update_rules():
             print("Connected sensors to {0} that may be at risk:".format(sensor['sensor_id']))
             print(sensor['connected_sensors'])
 
-        print("-" * 80)
+        print("-" * 123)
 
     if filter_update_rule_2:
-        print("-" * 80)
+        print("-" * 123)
         print("Sensor vulnerability found: Sensor does not have a reset")
         print()
         print("Threat: Should the node have a vulnerability, there is no way to update it. "
@@ -319,7 +319,7 @@ def update_rules():
 
         cvss_calc('CVSS:3.0/S:U/C:H/I:H/A:L/AV:L/AC:L/PR:L/UI:R')
 
-        print("-" * 80)
+        print("-" * 123)
 
 
 def routing_protocol_rules():
@@ -330,7 +330,7 @@ def routing_protocol_rules():
     filter_routing_rule_1 = tuple(routing_rule_1.filter(sensor_list))
 
     if filter_routing_rule_1:
-        print("-" * 80)
+        print("-" * 123)
         print("Sensor vulnerability found: Sensor using LEACH as a network"
               " routing protocol")
         print()
@@ -413,7 +413,7 @@ def cve_2020_10757():
                     print("Connected sensors to sensor{0} that may be at risk:".format(sensor['sensor_id']))
                     print(sensor['connected_sensors'])
 
-            print("-" * 80)
+            print("-" * 123)
 
     if filter_node_rule_1:
         if filter_ubuntu_rule_1:
@@ -437,7 +437,7 @@ def cve_2020_10757():
                     print("Connected sensors to sensor{0} that may be at risk:".format(sensor['sensor_id']))
                     print(sensor['connected_sensors'])
 
-            print("-" * 80)
+            print("-" * 123)
 
     if filter_node_rule_1:
         if filter_ubuntu_rule_1:
@@ -464,7 +464,7 @@ def cve_2020_10757():
     if filter_node_rule_1:
         if debian_rule_1:
             if filter_debian_rule_1:
-                print("-" * 80)
+                print("-" * 123)
                 print("Sensor vulnerability found: A flaw was found in the Linux Kernel in versions after "
                       "4.5-rc1 in the way mremap handled DAX Huge Pages. \n\t\t\t\t\t\t\tThis flaw allows a local "
                       "attacker with access to a DAX enabled storage to escalate their privileges on the system. "
@@ -484,7 +484,7 @@ def cve_2020_10757():
                     print("Connected sensors to sensor{0} that may be at risk:".format(sensor['sensor_id']))
                     print(sensor['connected_sensors'])
 
-            print("-" * 80)
+            print("-" * 123)
 
 
 def log4j():
@@ -495,7 +495,7 @@ def log4j():
     filter_log4j_rule = tuple(log4j_rule.filter(sensor_list))
 
     if filter_log4j_rule:
-        print("-" * 80)
+        print("-" * 123)
         print("Sensor vulnerability found: Log4j dependency used. A flaw was found in the Apache Log4j logging "
               "library in versions from 2.0.0 and before 2.15.0. \n\t\t\t\t\t\t\tA remote attacker who can control log "
               "messages or log message parameters, can execute arbitrary code on the server via JNDI LDAP endpoint.")
@@ -521,7 +521,7 @@ def authentication_rules():
     filter_authentication_rule_1 = tuple(authentication_rule_1.filter(sensor_list))
 
     if filter_authentication_rule_1:
-        print("-" * 80)
+        print("-" * 123)
         print("Sensor vulnerability found: Sensor using LEAP for authentication. LEAP is vulnerable to dictionary "
               "attacks.")
         print("Threat: Attacker can guess default and easily guessable passwords and authenticate themselves on the "
@@ -534,7 +534,7 @@ def authentication_rules():
             print("Connected sensors to sensor{0} that may be at risk:".format(sensor['sensor_id']))
             print(sensor['connected_sensors'])
 
-        print("-" * 80)
+        print("-" * 123)
 
 
 # --- classes ---

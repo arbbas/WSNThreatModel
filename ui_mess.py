@@ -71,7 +71,7 @@ def node_capturing_rules():
     filter_node_rule_1 = tuple(node_rule_1.filter(sensor_list))
 
     if filter_node_rule_1:
-        print("-" * 80)
+        print("-" * 123)
         print("Sensor vulnerability found: Data stored on device")
         print()
         print("Threat: Node capturing - if node captured data might be obtained by an adversary")
@@ -84,7 +84,7 @@ def node_capturing_rules():
             print("Connected sensors to {0} that may be at risk:".format(sensor['sensor_id']))
             print(sensor['connected_sensors'])
 
-        print("-" * 80)
+        print("-" * 123)
 
 
 node_capturing_rules()
