@@ -31,7 +31,8 @@
                     "Bluetooth",
                     "NFC",
                     "Zigbee",
-                    "MiWi"
+                    "MiWi",
+                    "LoRaWAN"
                 ]
             },
             "uniqueItems": true

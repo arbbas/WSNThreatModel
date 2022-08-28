@@ -88,12 +88,12 @@ def node_capturing_rules():
     if filter_node_rule_1:
         print("-" * 123)
         print('Sensor vulnerability found: ',
-              "\n\nData stored on device\n")
+              "Data stored on device")
         print("*" * 20)
         print("Threat: ",
-              "\n\nNode capturing - if node captured data might be obtained by an adversary.\n")
+              "Node capturing - if node captured data might be obtained by an adversary.")
         print("*" * 20)
-        print("Control(s): ", "\n\nPlease make sure data on device is encrypted if possible.\n")
+        print("Control(s): ", "Please make sure data on device is encrypted if possible.")
         print("*" * 20)
         for sensor in filter_node_rule_1:
             print("Affected Sensor: ", *sensor['sensor_id'])
@@ -114,13 +114,13 @@ def anti_tamper_rules():
         print("-" * 123)
         print("Sensor vulnerability found: Sensor not tamper proof")
         print("*" * 20)
-        print("Threat: \n\nNode capturing - if node captured data might be obtained by an adversary.\n")
+        print("Threat: Node capturing - if node captured data might be obtained by an adversary.")
         print("*" * 20)
-        print("Threat: \n\nDenial of Service Attack - Should the sensor be a cluster head, "
+        print("Threat: Denial of Service Attack - Should the sensor be a cluster head, "
               "this may cause data to not reach the sink. Data from \nimportant sensors"
               " may also be lost.\n")
         print("*" * 20)
-        print("Control(s): \n\nInstall a sensor with a secure element that has a tamper resistance mechanism.\n")
+        print("Control(s): Install a sensor with a secure element that has a tamper resistance mechanism.")
         print("*" * 20)
         for sensor in filter_at_rule_1:
             print("Affected Sensor: ", *sensor['sensor_id'])
@@ -575,6 +575,139 @@ def authentication_rules():
         print("-" * 123)
 
 
+def shared_resources():
+    shared_resources_rule_1 = rule_engine.Rule(
+        'shared_resources == true'
+    )
+
+    filter_shared_resources_rule_1 = tuple(shared_resources_rule_1.filter(sensor_list))
+
+    if filter_shared_resources_rule_1:
+        print("-" * 123)
+        print("Sensor vulnerability found: Sensor shares resources with connected sensors")
+        print("*" * 20)
+        print("Threat: Any connected sensors could be at risk if sensor is attacked.")
+        print("*" * 20)
+        print("Control: Sensors should share resources as little as possible. Please reconfigure where possible.")
+        print("*" * 20)
+        for sensor in filter_shared_resources_rule_1:
+            print("Affected Sensor: ", *sensor['sensor_id'])
+            print("Connected sensors to sensor {0} that may be at risk:".format(*sensor['sensor_id']), end=' ')
+            print(*sensor['connected_sensors'], sep=', ')
+            print()
+
+        print("-" * 123)
+
+
+def lorawan():
+    lorawan_rule_1 = rule_engine.Rule(
+        'connection_type == ["LoRaWAN"]'
+    )
+    filter_lorawan_rule_1 = tuple(lorawan_rule_1.filter(sensor_list))
+    if filter_lorawan_rule_1:
+        print("-" * 123)
+        print("Sensor vulnerability found: Sensor using LoRaWAN. LoRaWAN is vulnerable to ACK Spoofing.")
+        print("*" * 20)
+        print("Threat: Information presented could be false.")
+        print("*" * 20)
+        print("Threat: Could lead to further attacks such as a selective forwarding attack.")
+        print("*" * 20)
+        print("Threat: Packet loss/corruption")
+        print("*" * 20)
+        print("Control: ACK messages do not indicate which message they confirm. Authenticated encryption of the MAC "
+              "layer \npayload will leave evidence of discarded frames in the frame counter value. The application "
+              "server will recognise frame \ncounter disparities as an issue.")
+        print("*" * 20)
+        for sensor in filter_lorawan_rule_1:
+            print("Affected Sensor: ", *sensor['sensor_id'])
+            print("Connected sensors to sensor {0} that may be at risk:".format(*sensor['sensor_id']), end=' ')
+            print(*sensor['connected_sensors'], sep=', ')
+            print()
+
+        print("-" * 123)
+
+
+def encryption():
+    encryption_rule_1 = rule_engine.Rule(
+        'encryption == ["MD5"]'
+    )
+    filter_encrytion_rule_1 = tuple(encryption_rule_1.filter(sensor_list))
+
+    if filter_encrytion_rule_1:
+        print("-" * 123)
+        print("Sensor vulnerability found: Using MD5 hashing algorithm.")
+        print("*" * 20)
+        print("Threat: MD5 is a deprecated cryptographic algorithm.")
+        print("*" * 20)
+        print("Threat: Collision attacks can be executed to forge certificates")
+        print("*" * 20)
+        print("Threat: Any information stored on the sensor hashed with MD5 can be viewed easier than with "
+              "none deprecated \nhashing algorithms.")
+        print("*" * 20)
+        print("Control: Use a more secure hashing algorithm such as SHA-2")
+        print("Please see more here: https://vulmon.com/vulnerabilitydetails?qid=CVE-2021-38386&scoretype=cvssv3")
+        print("*" * 20)
+        for sensor in filter_encrytion_rule_1:
+            print("Affected Sensor: ", *sensor['sensor_id'])
+            print("Connected sensors to sensor {0} that may be at risk:".format(*sensor['sensor_id']), end=' ')
+            print(*sensor['connected_sensors'], sep=', ')
+            print()
+        print("-" * 123)
+
+
+def cve_2021_38386():
+    cve_2021_38386_rule_1 = rule_engine.Rule(
+        'operating_system == "Contiki"'
+    )
+
+    filter_cve_2021_38386_rule_1 = tuple(cve_2021_38386_rule_1.filter(sensor_list))
+
+    cve_2021_38386_rule_2 = rule_engine.Rule(
+        'software_version == "3.0"'
+    )
+    filter_cve_2021_38386_rule_2 = tuple(cve_2021_38386_rule_2.filter(sensor_list))
+
+    if filter_cve_2021_38386_rule_1:
+        if filter_cve_2021_38386_rule_2:
+            print("-" * 123)
+            print("Sensor vulnerability found: In Contiki 3.0, a buffer overflow in the Telnet service enables remote "
+                  "threat \nactors to launch a denial of service attack because the ls command is mishandled when a"
+                  " directory has many \nfiles with long names.")
+            print("*" * 20)
+            print("Threat: Data availability for the WSN is reduced.")
+            print("*" * 20)
+            print("Threat: Ongoing issues caused by DoS such as incorrect decisions made within the system.")
+            print("*" * 20)
+            print("Control: Ensure that any devices operating Telnet services such as edge nodes are hardened and "
+                  "have the necessary \nauthentication methods and passwords in place before granting access to remote"
+                  " users.")
+            print("*" * 20)
+            for sensor in filter_cve_2021_38386_rule_2:
+                print("Affected Sensor: ", *sensor['sensor_id'])
+            print("Connected sensors to sensor {0} that may be at risk:".format(*sensor['sensor_id']), end=' ')
+            print(*sensor['connected_sensors'], sep=', ')
+            print()
+            print("-" * 123)
+
+
+def cve_2014_0323():
+    cve_2014_0323_rule_1 = rule_engine.Rule(
+        'operating_system == Windows'
+    )
+    filter_cve_2014_0323 = tuple(cve_2014_0323_rule_1.filter(sensor_list))
+
+    cve_2014_0323_rule_2 = rule_engine.Rule(
+        'software_version == "XP"'
+    )
+    filter_cve_2014_0323_rule_2 = tuple(cve_2014_0323_rule_2.filter(sensor_list))
+
+    cve_2014_0323_rule_3 = rule_engine.Rule(
+        'software_version == "Server 2012"'
+    )
+    filter_cve_2014_0323_rule_3 = tuple(cve_2014_0323_rule_3.filter(sensor_list))
+    print("-" * 123)
+
+
 # --------------- stdout redirect --------------------
 
 
@@ -620,7 +753,7 @@ def open_file():
     isValid, msg = validate_json(sensor_dict)
     print(msg)
 
-# ---------------------- UI ------------------------
+    # ---------------------- UI ------------------------
 
     pb1 = Progressbar(
         root,
@@ -676,6 +809,10 @@ analyse = tk.Button(root, text='Analyse', command=lambda: [
     cve_2020_10757(),
     log4j(),
     communication_rules(),
+    shared_resources(),
+    lorawan(),
+    encryption(),
+    cve_2021_38386(),
     threat_counter()
 ])
 
