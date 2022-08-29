@@ -10,6 +10,7 @@ from jsonschema import validate
 from jsonschema import Draft202012Validator
 import rule_engine
 from cvss import CVSS3
+import pyfiglet
 
 # --------------- threat calculations --------------------
 
@@ -26,6 +27,11 @@ def threat_counter():
     print("\tHigh threat count: {0}".format(high_threats))
     print("\tMedium threat count: {0}".format(medium_threats))
     print("\tLow threat count: {0}".format(low_threats))
+    print()
+    print("Thank you for using WSN Threat Modelling Tool. Please address the {0} critical threat(s) and {1} high"
+          " threat(s) as soon as \npossible".format(critical_threats, high_threats))
+    print()
+    print("Please scroll up to read the full report.")
 
 
 def cvss_calc(vector):
@@ -1015,6 +1021,37 @@ def secure_key_storage():
         print("-" * 123)
 
 
+def time_diversity():
+    time_diversity_rule_1 = rule_engine.Rule(
+        'time_diversity == false'
+    )
+    filter_time_diversity_rule_1 = tuple(time_diversity_rule_1.filter(sensor_list))
+
+    global high_threats
+
+    if filter_time_diversity_rule_1:
+        print("-" * 123)
+        print("Sensor vulnerability found: Sensor not applying time diversity to packet transmission.")
+        print("*" * 20)
+        print("Threat: Collision of packets between sensors.")
+        print("*" * 20)
+        print("Threat: Energy exhaustion resulting in DoS from affected sensors")
+        print("*" * 20)
+        print("Threat: Packet integrity could be compromised")
+        print("*" * 20)
+        print("Control: Apply time diversity to packet transmissions.")
+        print("*" * 20)
+        for sensor in filter_time_diversity_rule_1:
+            print("Affected Sensor: ", *sensor['sensor_id'])
+            print("Connected sensors to sensor {0} that may be at risk:".format(*sensor['sensor_id']), end=' ')
+            print(*sensor['connected_sensors'], sep=', ')
+            print()
+
+        cvss_calc('CVSS:3.0/S:C/C:L/I:H/A:H/AV:N/AC:H/PR:H/UI:R')
+        high_threats += 1
+        print("-" * 123)
+
+
 # --------------- stdout redirect --------------------
 
 
@@ -1036,6 +1073,11 @@ def pdf_gen():
 
 def hide(x):
     x.grid_remove()
+
+
+def show_end(event):
+    text.see(tk.END)
+    text.edit_modified(0)  # IMPORTANT - or <<Modified>> will not be called later.
 
 
 # --------------- data ingest--------------------
@@ -1124,7 +1166,9 @@ analyse = tk.Button(root, text='Analyse', command=lambda: [
     cve_2019_1489(),
     access_control(),
     secure_key_storage(),
-    threat_counter()
+    time_diversity(),
+    threat_counter(),
+    text.see(tk.END)
 ])
 
 analyse.grid(row=2, column=0, columnspan=2, pady=10)
