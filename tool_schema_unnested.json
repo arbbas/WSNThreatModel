@@ -238,6 +238,10 @@
         "accessible_battery_data": {
             "description": "Does the sensor broadcast its battery levels when low?",
             "type": "boolean"
+        },
+        "access_control": {
+            "description": "Does the sensor have access control?",
+            "type": "boolean"
         }
     },
     "additionalProperties": false,
@@ -272,6 +276,7 @@
         "accessible_battery_data",
         "anti_tamper_destruction",
         "secure_boot",
-        "dependencies"
+        "dependencies",
+        "access_control"
     ]
 }

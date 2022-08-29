@@ -29,7 +29,7 @@ def threat_counter():
 
 
 def cvss_calc(vector):
-    print()
+    print("*" * 20)
     print("Vulnerability Level:")
     print()
     c = CVSS3(vector)
@@ -86,6 +86,7 @@ def node_capturing_rules():
     filter_node_rule_1 = tuple(node_rule_1.filter(sensor_list))
 
     if filter_node_rule_1:
+        global high_threats
         print("-" * 123)
         print('Sensor vulnerability found: ',
               "Data stored on device")
@@ -100,6 +101,10 @@ def node_capturing_rules():
             print("Connected sensors to sensor {0} that may be at risk:".format(*sensor['sensor_id']), end=' ')
             print(*sensor['connected_sensors'], sep=', ')
             print()
+
+        cvss_calc('CVSS:3.0/S:C/C:H/I:H/A:L/AV:P/AC:L/PR:N/UI:R')
+        high_threats += 1
+
         print("-" * 123)
 
 
@@ -111,6 +116,7 @@ def anti_tamper_rules():
     filter_at_rule_1 = tuple(at_rule_1.filter(sensor_list))
 
     if filter_at_rule_1:
+        global medium_threats
         print("-" * 123)
         print("Sensor vulnerability found: Sensor not tamper proof")
         print("*" * 20)
@@ -127,6 +133,9 @@ def anti_tamper_rules():
             print("Connected sensors to sensor {0} that may be at risk:".format(*sensor['sensor_id']), end=' ')
             print(*sensor['connected_sensors'], sep=', ')
             print()
+
+        cvss_calc('CVSS:3.0/S:U/C:H/I:L/A:H/AV:P/AC:L/PR:N/UI:R')
+        medium_threats += 1
         print("-" * 123)
 
 
@@ -138,6 +147,7 @@ def battery_information_rule():
     filter_battery_rule_1 = tuple(battery_rule_1.filter(sensor_list))
 
     if filter_battery_rule_1:
+        global high_threats
         print("-" * 123)
         print("Sensor vulnerability found: Battery information not shared")
         print("*" * 20)
@@ -156,6 +166,8 @@ def battery_information_rule():
             print(*sensor['connected_sensors'], sep=', ')
             print()
 
+        cvss_calc('CVSS:3.0/S:U/C:L/I:L/A:H/AV:N/AC:L/PR:N/UI:N')
+        high_threats += 1
         print("-" * 123)
 
 
@@ -170,6 +182,9 @@ def communication_rules():
     )
 
     filter_comm_rule_2 = tuple(comm_rule_2.filter(sensor_list))
+
+    global medium_threats
+    global high_threats
 
     if filter_comm_rule_1:
         print("-" * 123)
@@ -190,6 +205,8 @@ def communication_rules():
             print(*sensor['connected_sensors'], sep=', ')
             print()
 
+        cvss_calc('CVSS:3.0/S:U/C:L/I:H/A:H/AV:N/AC:H/PR:L/UI:R')
+        medium_threats += 1
         print("-" * 123)
 
     if filter_comm_rule_2:
@@ -217,6 +234,8 @@ def communication_rules():
             print(*sensor['connected_sensors'], sep=', ')
             print()
 
+        cvss_calc('CVSS:3.0/S:C/C:H/I:H/A:L/AV:N/AC:H/PR:H/UI:R')
+        high_threats += 1
         print("-" * 123)
 
     if filter_comm_rule_2:
@@ -239,6 +258,8 @@ def communication_rules():
             print(*sensor['connected_sensors'], sep=', ')
             print()
 
+        cvss_calc('CVSS:3.0/S:C/C:L/I:H/A:H/AV:N/AC:H/PR:L/UI:R')
+        high_threats += 1
         print("-" * 123)
 
     if filter_comm_rule_2:
@@ -260,6 +281,8 @@ def communication_rules():
             print(*sensor['connected_sensors'], sep=', ')
             print()
 
+        cvss_calc('CVSS:3.0/S:C/C:L/I:H/A:H/AV:N/AC:H/PR:L/UI:R')
+        high_threats += 1
         print("-" * 123)
 
 
@@ -269,6 +292,8 @@ def boot_rule():
     )
 
     filter_boot_rule_1 = tuple(boot_rule_1.filter(sensor_list))
+
+    global high_threats
 
     if filter_boot_rule_1:
         print("-" * 123)
@@ -290,6 +315,8 @@ def boot_rule():
             print(*sensor['connected_sensors'], sep=', ')
             print()
 
+        cvss_calc('CVSS:3.0/S:U/C:H/I:L/A:H/AV:L/AC:L/PR:N/UI:R')
+        high_threats += 1
         print("-" * 123)
 
 
@@ -305,6 +332,8 @@ def update_rules():
     )
 
     filter_update_rule_2 = tuple(update_rule_2.filter(sensor_list))
+
+    global medium_threats
 
     if filter_update_rule_1:
         print("-" * 123)
@@ -323,10 +352,11 @@ def update_rules():
             print(*sensor['connected_sensors'], sep=', ')
             print()
 
+        cvss_calc('CVSS:3.0/S:U/C:N/I:N/A:H/AV:L/AC:L/PR:L/UI:R')
+        medium_threats += 1
         print("-" * 123)
 
     if filter_update_rule_2:
-        global medium_threats
         print("-" * 123)
         print("Sensor vulnerability found: Sensor does not have a reset")
         print("*" * 20)
@@ -353,6 +383,8 @@ def routing_protocol_rules():
 
     filter_routing_rule_1 = tuple(routing_rule_1.filter(sensor_list))
 
+    global high_threats
+
     if filter_routing_rule_1:
         print("-" * 123)
         print("Sensor vulnerability found: Sensor using LEACH as a network"
@@ -370,6 +402,9 @@ def routing_protocol_rules():
             print("Connected sensors to sensor {0} that may be at risk:".format(*sensor['sensor_id']), end=' ')
             print(*sensor['connected_sensors'], sep=', ')
             print()
+
+        cvss_calc('CVSS:3.0/S:C/C:L/I:L/A:H/AV:N/AC:H/PR:L/UI:R')
+        high_threats += 1
         print("-" * 123)
 
 
@@ -416,6 +451,8 @@ def cve_2020_10757():
 
     filter_debian_version_rule_1 = tuple(debian_version_rule_1.filter(sensor_list))
 
+    global high_threats
+
     if filter_node_rule_1:
         if filter_ubuntu_rule_1:
             if filter_ubuntu_version_rule_1:
@@ -442,6 +479,8 @@ def cve_2020_10757():
                     print(*sensor['connected_sensors'], sep=', ')
                     print()
 
+                cvss_calc('CVSS:3.0/S:U/C:H/I:H/A:H/AV:L/AC:L/PR:L/UI:R')
+                high_threats += 1
                 print("-" * 123)
 
     if filter_node_rule_1:
@@ -470,6 +509,8 @@ def cve_2020_10757():
                     print(*sensor['connected_sensors'], sep=', ')
                     print()
 
+                cvss_calc('CVSS:3.0/S:U/C:H/I:H/A:H/AV:L/AC:L/PR:L/UI:R')
+                high_threats += 1
                 print("-" * 123)
 
     if filter_node_rule_1:
@@ -494,6 +535,9 @@ def cve_2020_10757():
                     print("Connected sensors to sensor {0} that may be at risk:".format(*sensor['sensor_id']), end=' ')
                     print(*sensor['connected_sensors'], sep=', ')
                     print()
+
+                cvss_calc('CVSS:3.0/S:U/C:H/I:H/A:H/AV:L/AC:L/PR:L/UI:R')
+                high_threats += 1
                 print("-" * 123)
 
     if filter_node_rule_1:
@@ -519,6 +563,8 @@ def cve_2020_10757():
                     print(*sensor['connected_sensors'], sep=', ')
                     print()
 
+                cvss_calc('CVSS:3.0/S:U/C:H/I:H/A:H/AV:L/AC:L/PR:L/UI:R')
+                high_threats += 1
                 print("-" * 123)
 
 
@@ -529,8 +575,9 @@ def log4j():
 
     filter_log4j_rule = tuple(log4j_rule.filter(sensor_list))
 
+    global critical_threats
+
     if filter_log4j_rule:
-        global critical_threats
         print("-" * 123)
         print("Sensor vulnerability found: Log4j dependency used. A flaw was found in the Apache Log4j logging "
               "library in versions from 2.0.0 and before 2.15.0. \nA remote attacker who can control log "
@@ -572,6 +619,8 @@ def authentication_rules():
             print(*sensor['connected_sensors'], sep=', ')
             print()
 
+        cvss_calc('CVSS:3.0/S:C/C:H/I:L/A:L/AV:N/AC:H/PR:N/UI:R')
+
         print("-" * 123)
 
 
@@ -581,6 +630,8 @@ def shared_resources():
     )
 
     filter_shared_resources_rule_1 = tuple(shared_resources_rule_1.filter(sensor_list))
+
+    global high_threats
 
     if filter_shared_resources_rule_1:
         print("-" * 123)
@@ -596,6 +647,8 @@ def shared_resources():
             print(*sensor['connected_sensors'], sep=', ')
             print()
 
+        cvss_calc('CVSS:3.0/S:C/C:H/I:L/A:L/AV:N/AC:H/PR:H/UI:N')
+        high_threats += 1
         print("-" * 123)
 
 
@@ -604,6 +657,9 @@ def lorawan():
         'connection_type == ["LoRaWAN"]'
     )
     filter_lorawan_rule_1 = tuple(lorawan_rule_1.filter(sensor_list))
+
+    global high_threats
+
     if filter_lorawan_rule_1:
         print("-" * 123)
         print("Sensor vulnerability found: Sensor using LoRaWAN. LoRaWAN is vulnerable to ACK Spoofing.")
@@ -624,6 +680,8 @@ def lorawan():
             print(*sensor['connected_sensors'], sep=', ')
             print()
 
+        cvss_calc('CVSS:3.0/S:C/C:L/I:H/A:H/AV:N/AC:H/PR:L/UI:R')
+        high_threats += 1
         print("-" * 123)
 
 
@@ -632,6 +690,8 @@ def encryption():
         'encryption == ["MD5"]'
     )
     filter_encrytion_rule_1 = tuple(encryption_rule_1.filter(sensor_list))
+
+    global medium_threats
 
     if filter_encrytion_rule_1:
         print("-" * 123)
@@ -652,6 +712,9 @@ def encryption():
             print("Connected sensors to sensor {0} that may be at risk:".format(*sensor['sensor_id']), end=' ')
             print(*sensor['connected_sensors'], sep=', ')
             print()
+
+        cvss_calc('CVSS:3.0/S:U/C:H/I:L/A:L/AV:L/AC:L/PR:N/UI:R')
+        medium_threats += 1
         print("-" * 123)
 
 
@@ -666,6 +729,8 @@ def cve_2021_38386():
         'software_version == "3.0"'
     )
     filter_cve_2021_38386_rule_2 = tuple(cve_2021_38386_rule_2.filter(sensor_list))
+
+    global medium_threats
 
     if filter_cve_2021_38386_rule_1:
         if filter_cve_2021_38386_rule_2:
@@ -684,17 +749,20 @@ def cve_2021_38386():
             print("*" * 20)
             for sensor in filter_cve_2021_38386_rule_2:
                 print("Affected Sensor: ", *sensor['sensor_id'])
-            print("Connected sensors to sensor {0} that may be at risk:".format(*sensor['sensor_id']), end=' ')
-            print(*sensor['connected_sensors'], sep=', ')
-            print()
+                print("Connected sensors to sensor {0} that may be at risk:".format(*sensor['sensor_id']), end=' ')
+                print(*sensor['connected_sensors'], sep=', ')
+                print()
+
+            cvss_calc('CVSS:3.0/S:U/C:L/I:L/A:L/AV:L/AC:H/PR:L/UI:R')
+            medium_threats += 1
             print("-" * 123)
 
 
 def cve_2014_0323():
     cve_2014_0323_rule_1 = rule_engine.Rule(
-        'operating_system == Windows'
+        'operating_system == "Windows"'
     )
-    filter_cve_2014_0323 = tuple(cve_2014_0323_rule_1.filter(sensor_list))
+    filter_cve_2014_0323_rule_1 = tuple(cve_2014_0323_rule_1.filter(sensor_list))
 
     cve_2014_0323_rule_2 = rule_engine.Rule(
         'software_version == "XP"'
@@ -705,7 +773,246 @@ def cve_2014_0323():
         'software_version == "Server 2012"'
     )
     filter_cve_2014_0323_rule_3 = tuple(cve_2014_0323_rule_3.filter(sensor_list))
-    print("-" * 123)
+
+    cve_2014_0323_rule_4 = rule_engine.Rule(
+        'software_version == "Vista"'
+    )
+    filter_cve_2014_0323_rule_4 = tuple(cve_2014_0323_rule_4.filter(sensor_list))
+
+    cve_2014_0323_rule_5 = rule_engine.Rule(
+        'software_version == "7"'
+    )
+    filter_cve_2014_0323_rule_5 = tuple(cve_2014_0323_rule_5.filter(sensor_list))
+
+    cve_2014_0323_rule_6 = rule_engine.Rule(
+        'software_version == "8"'
+    )
+    filter_cve_2014_0323_rule_6 = tuple(cve_2014_0323_rule_6.filter(sensor_list))
+
+    global medium_threats
+
+    if filter_cve_2014_0323_rule_1:
+        if filter_cve_2014_0323_rule_2:
+            print("-" * 123)
+            print("Sensor Vulnerability found: win32k.sys in the kernel-mode drivers in Windows XP allow local users to"
+                  " obtain \nsensitive information from kernel memory or cause a denial of service (system hang) via a "
+                  "crafted application, \naka 'Win32k Information Disclosure Vulnerability.'")
+            print("*" * 20)
+            print("Threat: Total shutdown of sensor meaning data will no longer be available.")
+            print("*" * 20)
+            print("Threat: There is total information disclosure, resulting in all system files being revealed.")
+            print("*" * 20)
+            print("Control: Please complete SP2 or SP3 update")
+            print("Please see here for further details: https://www.cvedetails.com/cve/CVE-2014-0323/")
+            print("*" * 20)
+            for sensor in filter_cve_2014_0323_rule_2:
+                print("Affected Sensor: ", *sensor['sensor_id'])
+                print("Connected sensors to sensor {0} that may be at risk:".format(*sensor['sensor_id']), end=' ')
+                print(*sensor['connected_sensors'], sep=', ')
+                print()
+
+            cvss_calc('CVSS:3.0/S:U/C:H/I:L/A:H/AV:L/AC:H/PR:H/UI:R')
+            medium_threats += 1
+            print("-" * 123)
+
+    if filter_cve_2014_0323_rule_1:
+        if filter_cve_2014_0323_rule_3:
+            print("-" * 123)
+            print("Sensor Vulnerability found: win32k.sys in the kernel-mode drivers in Server 2012 allow local users "
+                  "to \nobtain sensitive information from kernel memory or cause a denial of service (system hang) via "
+                  "a crafted application,\naka 'Win32k Information Disclosure Vulnerability.'")
+            print("*" * 20)
+            print("Threat: Total shutdown of sensor meaning data will no longer be available.")
+            print("*" * 20)
+            print("Threat: There is total information disclosure, resulting in all system files being revealed.")
+            print("*" * 20)
+            print("Control: Please complete SP1 update")
+            print("Please see here for further details: https://www.cvedetails.com/cve/CVE-2014-0323/")
+            print("*" * 20)
+            for sensor in filter_cve_2014_0323_rule_3:
+                print("Affected Sensor: ", *sensor['sensor_id'])
+                print("Connected sensors to sensor {0} that may be at risk:".format(*sensor['sensor_id']), end=' ')
+                print(*sensor['connected_sensors'], sep=', ')
+                print()
+
+            cvss_calc('CVSS:3.0/S:U/C:H/I:L/A:H/AV:L/AC:H/PR:H/UI:R')
+            medium_threats += 1
+            print("-" * 123)
+
+    if filter_cve_2014_0323_rule_1:
+        if filter_cve_2014_0323_rule_4:
+            print("-" * 123)
+            print("Sensor Vulnerability found: win32k.sys in the kernel-mode drivers in Windows Vista allow local users"
+                  " to obtain \nsensitive information from kernel memory or cause a denial of service (system hang) via"
+                  " a crafted application, \naka 'Win32k Information Disclosure Vulnerability.'")
+            print("*" * 20)
+            print("Threat: Total shutdown of sensor meaning data will no longer be available.")
+            print("*" * 20)
+            print("Threat: There is total information disclosure, resulting in all system files being revealed.")
+            print("*" * 20)
+            print("Control: Please complete SP2 update.")
+            print("Please see here for further details: https://www.cvedetails.com/cve/CVE-2014-0323/")
+            print("*" * 20)
+            for sensor in filter_cve_2014_0323_rule_4:
+                print("Affected Sensor: ", *sensor['sensor_id'])
+                print("Connected sensors to sensor {0} that may be at risk:".format(*sensor['sensor_id']), end=' ')
+                print(*sensor['connected_sensors'], sep=', ')
+                print()
+
+            cvss_calc('CVSS:3.0/S:U/C:H/I:L/A:H/AV:L/AC:H/PR:H/UI:R')
+            medium_threats += 1
+            print("-" * 123)
+
+    if filter_cve_2014_0323_rule_1:
+        if filter_cve_2014_0323_rule_5:
+            print("-" * 123)
+            print("Sensor Vulnerability found: win32k.sys in the kernel-mode drivers in Windows 7 allow local users"
+                  "to obtain \nsensitive information from kernel memory or cause a denial of service (system hang) via "
+                  "a crafted application, \naka 'Win32k Information Disclosure Vulnerability.'")
+            print("*" * 20)
+            print("Threat: Total shutdown of sensor meaning data will no longer be available.")
+            print("*" * 20)
+            print("Threat: There is total information disclosure, resulting in all system files being revealed.")
+            print("*" * 20)
+            print("Control: Please complete SP1 update.")
+            print("Please see here for further details: https://www.cvedetails.com/cve/CVE-2014-0323/")
+            print("*" * 20)
+            for sensor in filter_cve_2014_0323_rule_5:
+                print("Affected Sensor: ", *sensor['sensor_id'])
+                print("Connected sensors to sensor {0} that may be at risk:".format(*sensor['sensor_id']), end=' ')
+                print(*sensor['connected_sensors'], sep=', ')
+                print()
+
+            cvss_calc('CVSS:3.0/S:U/C:H/I:L/A:H/AV:L/AC:H/PR:H/UI:R')
+            medium_threats += 1
+            print("-" * 123)
+
+    if filter_cve_2014_0323_rule_1:
+        if filter_cve_2014_0323_rule_6:
+            print("-" * 123)
+            print("Sensor Vulnerability found: win32k.sys in the kernel-mode drivers in Windows 8 allow local users"
+                  "to obtain \nsensitive information from kernel memory or cause a denial of service (system hang) via "
+                  "a crafted application, \naka 'Win32k Information Disclosure Vulnerability.'")
+            print("*" * 20)
+            print("Threat: Total shutdown of sensor meaning data will no longer be available.")
+            print("*" * 20)
+            print("Threat: There is total information disclosure, resulting in all system files being revealed.")
+            print("*" * 20)
+            print("Control: Please complete SP1 update.")
+            print("Please see here for further details: https://www.cvedetails.com/cve/CVE-2014-0323/")
+            print("*" * 20)
+            for sensor in filter_cve_2014_0323_rule_6:
+                print("Affected Sensor: ", *sensor['sensor_id'])
+                print("Connected sensors to sensor {0} that may be at risk:".format(*sensor['sensor_id']), end=' ')
+                print(*sensor['connected_sensors'], sep=', ')
+                print()
+
+            cvss_calc('CVSS:3.0/S:U/C:H/I:L/A:H/AV:L/AC:H/PR:H/UI:R')
+            medium_threats += 1
+            print("-" * 123)
+
+
+def cve_2019_1489():
+    cve_2019_1489_rule_1 = rule_engine.Rule(
+        'operating_system == "Windows"'
+    )
+    filter_cve_2019_1489_rule_1 = tuple(cve_2019_1489_rule_1.filter(sensor_list))
+
+    cve_2019_1489_rule_2 = rule_engine.Rule(
+        'operating_system == "XP"'
+    )
+    filter_cve_2019_1489_rule_2 = tuple(cve_2019_1489_rule_2.filter(sensor_list))
+
+    if filter_cve_2019_1489_rule_1:
+        if filter_cve_2019_1489_rule_2:
+            print("-" * 123)
+            print("Sensor vulnerability found: An information disclosure vulnerability exists when the Windows Remote "
+                  "Desktop Protocol (RDP)\n fails to properly handle objects in memory, aka 'Remote Desktop Protocol "
+                  "Information Disclosure Vulnerability'.")
+            print("*" * 20)
+            print("Threat: There is considerable informational disclosure.")
+            print("*" * 20)
+            print("Control: Please complete SP3 update")
+            print("Please see here for further details: https://www.cvedetails.com/cve/CVE-2019-1489/")
+            print("*" * 20)
+            for sensor in filter_cve_2019_1489_rule_2:
+                print("Affected Sensor: ", *sensor['sensor_id'])
+                print("Connected sensors to sensor {0} that may be at risk:".format(*sensor['sensor_id']), end=' ')
+                print(*sensor['connected_sensors'], sep=', ')
+                print()
+
+            cvss_calc('CVSS:3.0/S:U/C:H/I:L/A:H/AV:L/AC:H/PR:H/UI:R')
+
+            print("-" * 123)
+
+
+def access_control():
+    access_control_rule_1 = rule_engine.Rule(
+        'access_control == false'
+    )
+    filter_access_control_rule_1 = tuple(access_control_rule_1.filter(sensor_list))
+
+    global high_threats
+
+    if filter_access_control_rule_1:
+        print("-" * 123)
+        print("Sensor vulnerability found: Sensor does not have access control.")
+        print("*" * 20)
+        print("Threat: Eavesdropping - Threat actors may be able to passively capture data.")
+        print("*" * 20)
+        print("Threat: Threat actors may be able to launch other attacks (wormhole, black-hole)")
+        print("*" * 20)
+        print("Control(s):")
+        print("1) Enable access control")
+        print("2) Reduce sensed data details")
+        print("3) Access restriction")
+        print("4) Use strong encryption techniques")
+        print("*" * 20)
+        for sensor in filter_access_control_rule_1:
+            print("Affected Sensor: ", *sensor['sensor_id'])
+            print("Connected sensors to sensor {0} that may be at risk:".format(*sensor['sensor_id']), end=' ')
+            print(*sensor['connected_sensors'], sep=', ')
+            print()
+
+        cvss_calc('CVSS:3.0/S:C/C:H/I:L/A:L/AV:L/AC:L/PR:N/UI:R')
+        high_threats += 1
+        print("-" * 123)
+
+
+def secure_key_storage():
+    secure_key_storage_rule_1 = rule_engine.Rule(
+        'secure_key_storage == ["none"]'
+    )
+    filter_secure_key_storage_rule_1 = tuple(secure_key_storage_rule_1.filter(sensor_list))
+
+    global high_threats
+
+    if filter_secure_key_storage_rule_1:
+        print("-" * 123)
+        print("Sensor vulnerability found: Keys not stored in secure element.")
+        print("*" * 20)
+        print("Threat: A threat actor could use a malicious node to impersonate a valid node using the compromised "
+              "keys.")
+        print("*" * 20)
+        print("Threat: Routing information modification")
+        print("*" * 20)
+        print("Threat: False sensor readings")
+        print("*" * 20)
+        print("Threat: Resources exhaustion")
+        print("*" * 20)
+        print("Threat: Carrying out further attacks to disrupt operation of the WSN")
+        print("*" * 20)
+        print("Controls(s): Install sensors with secure element.")
+        print("*" * 20)
+        for sensor in filter_secure_key_storage_rule_1:
+            print("Affected Sensor: ", *sensor['sensor_id'])
+            print("Connected sensors to sensor {0} that may be at risk:".format(*sensor['sensor_id']), end=' ')
+            print(*sensor['connected_sensors'], sep=', ')
+            print()
+
+        cvss_calc('CVSS:3.0/S:C/C:H/I:H/A:L/AV:P/AC:L/PR:N/UI:R')
+        high_threats += 1
+        print("-" * 123)
 
 
 # --------------- stdout redirect --------------------
@@ -813,6 +1120,10 @@ analyse = tk.Button(root, text='Analyse', command=lambda: [
     lorawan(),
     encryption(),
     cve_2021_38386(),
+    cve_2014_0323(),
+    cve_2019_1489(),
+    access_control(),
+    secure_key_storage(),
     threat_counter()
 ])
 
