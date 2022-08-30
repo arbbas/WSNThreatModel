@@ -223,8 +223,8 @@ def anti_tamper_rules():
         print("Threat: Node capturing - if node captured data might be obtained by an adversary.")
         print("*" * 20)
         print("Threat: Denial of Service Attack - Should the sensor be a cluster head, "
-              "this may cause data to not reach the sink. Data from \nimportant sensors"
-              " may also be lost.\n")
+              "this may cause data to not reach the sink. Data \nfrom important sensors"
+              " may also be lost.")
         print("*" * 20)
         print("Control(s): Install a sensor with a secure element that has a tamper resistance mechanism.")
         print("*" * 20)
@@ -646,15 +646,18 @@ def cve_2020_10757():
                       "4.5-rc1 in the way mremap handled \nDAX Huge Pages. This flaw allows a local "
                       "attacker with access to a DAX enabled storage to escalate \ntheir privileges on the system. "
                       "This vulnerability affects Ubuntu Linux Version 20.04.")
-                print()
+                print("*" * 20)
                 print("Threat: There is total information disclosure, resulting in all system files being revealed.")
+                print("*" * 20)
                 print("Threat: There is a total compromise of system integrity. There is a complete loss of system "
                       "protection, resulting in the entire system being compromised.")
+                print("*" * 20)
                 print("Threat: There is a total shutdown of the affected sensor. The attacker can render the "
                       "resource completely unavailable.")
-                print()
+                print("*" * 20)
                 print("Control: Please download the required bug fix. More information "
                       "can be found here: \nhttps://www.cvedetails.com/cve/CVE-2020-10757/")
+                print("*" * 20)
                 for sensor in filter_ubuntu_version_rule_3:
                     print("Affected Sensor: ", *sensor['sensor_id'])
                     print("Connected sensors to sensor {0} that may be at risk:".format(*sensor['sensor_id']), end=' ')
@@ -673,13 +676,15 @@ def cve_2020_10757():
                       "4.5-rc1 in the way mremap handled \nDAX Huge Pages. This flaw allows a local "
                       "attacker with access to a DAX enabled storage to escalate \ntheir privileges on the system. "
                       "This vulnerability affects Debian Linux Version 8.0.")
-                print()
+                print("*" * 20)
                 print("Threat: There is total information disclosure, resulting in all system files being revealed.")
+                print("*" * 20)
                 print("Threat: There is a total compromise of system integrity. There is a complete loss of system "
                       "protection, resulting in the entire system being compromised.")
+                print("*" * 20)
                 print("Threat: There is a total shutdown of the affected sensor. The attacker can render the "
                       "resource completely unavailable.")
-                print()
+                print("*" * 20)
                 print("Control: Please download the required bug fix. More information "
                       "can be found here: \nhttps://www.cvedetails.com/cve/CVE-2020-10757/")
                 for sensor in filter_debian_version_rule_1:
@@ -709,13 +714,14 @@ def log4j():
     if filter_log4j_rule:
         print("-" * 123)
         print("Sensor vulnerability found: Log4j dependency used. A flaw was found in the Apache Log4j logging "
-              "library in versions from 2.0.0 and before 2.15.0. \nA remote attacker who can control log "
-              "messages or log message parameters, can execute arbitrary code on the server via JNDI LDAP endpoint.")
-        print()
+              "library in versions \nfrom 2.0.0 and before 2.15.0. A remote attacker who can control log "
+              "messages or log message parameters, \ncan execute arbitrary code on the server via JNDI LDAP endpoint.")
+        print("*" * 20)
         print("Threat: Attackers can read all sensitive data collected in logs")
-        print()
+        print("*" * 20)
         print("Control: Update log4j to a version beyond 2.15.0 (preferably "
-              "current version. Alternative use another logging option.")
+              "current version. Alternatively use another logging option.")
+        print("*" * 20)
         for sensor in filter_log4j_rule:
             print("Affected Sensor: ", *sensor['sensor_id'])
             print("Connected sensors to sensor {0} that may be at risk:".format(*sensor['sensor_id']), end=' ')
@@ -744,10 +750,12 @@ def authentication_rules():
         print("-" * 123)
         print("Sensor vulnerability found: Sensor using LEAP for authentication. LEAP is vulnerable to dictionary "
               "attacks.")
+        print("*" * 20)
         print("Threat: Attacker can guess default and easily guessable passwords and authenticate themselves on the "
               "network.")
-        print()
+        print("*" * 20)
         print("Control: Please use strong passwords.")
+        print("*" * 20)
         for sensor in filter_authentication_rule_1:
             print("Affected Sensor: ", *sensor['sensor_id'])
             print("Connected sensors to sensor {0} that may be at risk:".format(*sensor['sensor_id']), end=' ')
