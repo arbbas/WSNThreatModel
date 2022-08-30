@@ -10,7 +10,6 @@ from jsonschema import validate
 from jsonschema import Draft202012Validator
 import rule_engine
 from cvss import CVSS3
-import pyfiglet
 
 # --------------- threat calculations --------------------
 
@@ -21,7 +20,57 @@ medium_threats = 0
 low_threats = 0
 
 
-def threat_counter():
+def threat_counter_summary():
+    """
+    This function adds sums the total number of threats in each category
+    of vulnerability level. It is also the first text that the user
+    of the system will read.
+    :return:
+    """
+
+    threats = ["\tNode Capturing", "\tDenial of Service", "\tCollision", "\tResource Drainage", "\tJamming",
+               "\tHELLO Flood", "\tInformation Disclosure", "\tEavesdropping", "\tCompromised Packet Integrity"]
+
+    node_rule_1 = rule_engine.Rule(
+        'data_storage == true'
+    )
+
+    filter_node_rule_1 = tuple(node_rule_1.filter(sensor_list))
+
+    at_rule_1 = rule_engine.Rule(
+        'anti_tamper_destruction == false'
+    )
+
+    filter_at_rule_1 = tuple(at_rule_1.filter(sensor_list))
+
+    access_control_rule_1 = rule_engine.Rule(
+        'access_control == false'
+    )
+    filter_access_control_rule_1 = tuple(access_control_rule_1.filter(sensor_list))
+
+    battery_rule_1 = rule_engine.Rule(
+        'accessible_battery_data == false'
+    )
+
+    filter_battery_rule_1 = tuple(battery_rule_1.filter(sensor_list))
+
+    comm_rule_2 = rule_engine.Rule(
+        'connection_type == ["Zigbee"]'
+    )
+
+    filter_comm_rule_2 = tuple(comm_rule_2.filter(sensor_list))
+
+    routing_rule_1 = rule_engine.Rule(
+        'network_routing_protocols == ["LEACH"]'
+    )
+
+    filter_routing_rule_1 = tuple(routing_rule_1.filter(sensor_list))
+
+    time_diversity_rule_1 = rule_engine.Rule(
+        'time_diversity == false'
+    )
+    filter_time_diversity_rule_1 = tuple(time_diversity_rule_1.filter(sensor_list))
+
     print("Threat count summary:")
     print("\tCritical threat count: {0}".format(critical_threats))
     print("\tHigh threat count: {0}".format(high_threats))
@@ -29,28 +78,59 @@ def threat_counter():
     print("\tLow threat count: {0}".format(low_threats))
     print()
     print("Thank you for using WSN Threat Modelling Tool. Please address the {0} critical threat(s) and {1} high"
-          " threat(s) as soon as \npossible".format(critical_threats, high_threats))
+          " threat(s) as soon as \npossible.".format(critical_threats, high_threats))
     print()
-    print("Please scroll up to read the full report.")
+    print("""Please refer to documentation for report data ingest format. Documentation can be found here:
+    
+    \t\t                   https://github.com/arbbas/WSNThreatModel""")
+    print()
+    print()
+    print("Threat highlights:")
+    if filter_node_rule_1:
+        print(threats[0])
+    if filter_at_rule_1:
+        print(threats[1])
+    if filter_access_control_rule_1:
+        print(threats[7])
+    if filter_battery_rule_1:
+        print(threats[3])
+    if filter_comm_rule_2:
+        print(threats[4])
+    if filter_routing_rule_1:
+        print(threats[5])
+    if filter_time_diversity_rule_1:
+        print(threats[8])
+    print("\t\t\tPlease scroll up to read the full report.")
 
 
 def cvss_calc(vector):
+    """
+    Function to create CVSS scores based on a vector parsed in each rule.
+    The score is created using the CVSS3 module imported at the top of the script.
+    The vector is based on base and temporal scores.
+    :param vector:
+    :return:
+    """
     print("*" * 20)
-    print("Vulnerability Level:")
+    print("Vulnerability level:")
     print()
     c = CVSS3(vector)
     print(c.clean_vector())
     print("Base vulnerability score: ", c.base_score)
     sev = c.severities()
-    print("Vulnerability Level: ", sev[0])
+    print("Vulnerability level: ", sev[0])
+    print("*" * 20)
+    print("Temporal vulnerability score: ", c.temporal_score)
+    print("Vulnerability level with control: ", sev[1])
 
 
-# --------------- JSON related --------------------
+# --------------- JSON functions --------------------
 
 
 def source_schema():
     """ _summary_
-    A function to load the schema.
+    A function to load the schema in the main file directory. The schema is
+    seperate from the main program and will be parsed into the validator below.
     """
     with open('tool_schema_unnested.json', 'r', encoding='utf-8') as schema:
         schema = json.load(schema)
@@ -63,28 +143,35 @@ def validate_json(json_data):
 
     Args:
         json_data (json): inputted JSON data
+    Raises: ValidationError if JSON does not match the schema.
     """
+
+    # calls schema into variable
     json_schema = source_schema()
 
+    # validate method against schema and inputted data
     try:
         validate(instance=json_data, schema=json_schema, cls=Draft202012Validator)
+    # printed to console if JSON invalid. Will also inform the user of instances that
+    # do not conform to the schema
     except jsonschema.exceptions.ValidationError as err:
         print(err)
         err = "JSON data invalid, please follow guide."
         return False, err
 
+    # printed if the JSON is valid
     valid_message = "JSON data validated"
     return True, valid_message
 
 
 # --------------- rules --------------------
 
-def introduction():
-    print("Threat report generated. Please scroll to the bottom of the report for total threats "
-          "in each CVSS category.")
-
 
 def node_capturing_rules():
+    """
+    Function for rules based on node capturing vulnerabilities.
+    :return:
+    """
     node_rule_1 = rule_engine.Rule(
         'data_storage == true'
     )
@@ -108,21 +195,28 @@ def node_capturing_rules():
             print(*sensor['connected_sensors'], sep=', ')
             print()
 
-        cvss_calc('CVSS:3.0/S:C/C:H/I:H/A:L/AV:P/AC:L/PR:N/UI:R')
+        cvss_calc('CVSS:3.0/S:C/C:H/I:H/A:L/AV:P/AC:L/PR:N/UI:R/E:F/RL:O/RC:C')
         high_threats += 1
+
+        print("*" * 20)
 
         print("-" * 123)
 
 
 def anti_tamper_rules():
+    """
+    Function for rules based on node tampering vulnerabilities.
+    :return:
+    """
     at_rule_1 = rule_engine.Rule(
         'anti_tamper_destruction == false'
     )
 
     filter_at_rule_1 = tuple(at_rule_1.filter(sensor_list))
 
+    global medium_threats
+
     if filter_at_rule_1:
-        global medium_threats
         print("-" * 123)
         print("Sensor vulnerability found: Sensor not tamper proof")
         print("*" * 20)
@@ -140,20 +234,25 @@ def anti_tamper_rules():
             print(*sensor['connected_sensors'], sep=', ')
             print()
 
-        cvss_calc('CVSS:3.0/S:U/C:H/I:L/A:H/AV:P/AC:L/PR:N/UI:R')
+        cvss_calc('CVSS:3.0/S:U/C:H/I:L/A:H/AV:P/AC:L/PR:N/UI:R/E:H/RL:O/RC:C')
         medium_threats += 1
         print("-" * 123)
 
 
 def battery_information_rule():
+    """
+    Function for rules based on node battery information vulnerabilities.
+    :return:
+    """
     battery_rule_1 = rule_engine.Rule(
         'accessible_battery_data == false'
     )
 
     filter_battery_rule_1 = tuple(battery_rule_1.filter(sensor_list))
 
+    global high_threats
+
     if filter_battery_rule_1:
-        global high_threats
         print("-" * 123)
         print("Sensor vulnerability found: Battery information not shared")
         print("*" * 20)
@@ -172,12 +271,16 @@ def battery_information_rule():
             print(*sensor['connected_sensors'], sep=', ')
             print()
 
-        cvss_calc('CVSS:3.0/S:U/C:L/I:L/A:H/AV:N/AC:L/PR:N/UI:N')
+        cvss_calc('CVSS:3.0/S:U/C:L/I:L/A:H/AV:N/AC:L/PR:N/UI:N/E:U/RL:O/RC:R')
         high_threats += 1
         print("-" * 123)
 
 
 def communication_rules():
+    """
+    Function for node communication protocol vulnerabilities.
+    :return:
+    """
     comm_rule_1 = rule_engine.Rule(
         'connection_type == ["MiWi"]'
     )
@@ -211,7 +314,7 @@ def communication_rules():
             print(*sensor['connected_sensors'], sep=', ')
             print()
 
-        cvss_calc('CVSS:3.0/S:U/C:L/I:H/A:H/AV:N/AC:H/PR:L/UI:R')
+        cvss_calc('CVSS:3.0/S:U/C:L/I:H/A:H/AV:N/AC:H/PR:L/UI:R/E:H/RL:O/RC:C')
         medium_threats += 1
         print("-" * 123)
 
@@ -240,7 +343,7 @@ def communication_rules():
             print(*sensor['connected_sensors'], sep=', ')
             print()
 
-        cvss_calc('CVSS:3.0/S:C/C:H/I:H/A:L/AV:N/AC:H/PR:H/UI:R')
+        cvss_calc('CVSS:3.0/S:C/C:H/I:H/A:L/AV:N/AC:H/PR:H/UI:R/E:H/RL:O/RC:C')
         high_threats += 1
         print("-" * 123)
 
@@ -264,7 +367,7 @@ def communication_rules():
             print(*sensor['connected_sensors'], sep=', ')
             print()
 
-        cvss_calc('CVSS:3.0/S:C/C:L/I:H/A:H/AV:N/AC:H/PR:L/UI:R')
+        cvss_calc('CVSS:3.0/S:C/C:L/I:H/A:H/AV:N/AC:H/PR:L/UI:R/E:H/RL:O/RC:C')
         high_threats += 1
         print("-" * 123)
 
@@ -287,12 +390,16 @@ def communication_rules():
             print(*sensor['connected_sensors'], sep=', ')
             print()
 
-        cvss_calc('CVSS:3.0/S:C/C:L/I:H/A:H/AV:N/AC:H/PR:L/UI:R')
+        cvss_calc('CVSS:3.0/S:C/C:L/I:H/A:H/AV:N/AC:H/PR:L/UI:R/E:H/RL:O/RC:C')
         high_threats += 1
         print("-" * 123)
 
 
 def boot_rule():
+    """
+    Function for node boot vulnerabilities.
+    :return:
+    """
     boot_rule_1 = rule_engine.Rule(
         'secure_boot == false'
     )
@@ -321,12 +428,16 @@ def boot_rule():
             print(*sensor['connected_sensors'], sep=', ')
             print()
 
-        cvss_calc('CVSS:3.0/S:U/C:H/I:L/A:H/AV:L/AC:L/PR:N/UI:R')
+        cvss_calc('CVSS:3.0/S:U/C:H/I:L/A:H/AV:L/AC:L/PR:N/UI:R/E:U/RL:O/RC:R')
         high_threats += 1
         print("-" * 123)
 
 
 def update_rules():
+    """
+    Function for node update vulnerabilities.
+    :return:
+    """
     update_rule_1 = rule_engine.Rule(
         'update_process == "none"'
     )
@@ -358,7 +469,7 @@ def update_rules():
             print(*sensor['connected_sensors'], sep=', ')
             print()
 
-        cvss_calc('CVSS:3.0/S:U/C:N/I:N/A:H/AV:L/AC:L/PR:L/UI:R')
+        cvss_calc('CVSS:3.0/S:U/C:N/I:N/A:H/AV:L/AC:L/PR:L/UI:R/E:U/RL:O/RC:R')
         medium_threats += 1
         print("-" * 123)
 
@@ -377,12 +488,16 @@ def update_rules():
             print(*sensor['connected_sensors'], sep=', ')
             print()
 
-        cvss_calc('CVSS:3.0/S:U/C:H/I:H/A:L/AV:L/AC:L/PR:L/UI:R')
+        cvss_calc('CVSS:3.0/S:U/C:H/I:H/A:L/AV:L/AC:L/PR:L/UI:R/E:U/RL:W/RC:C')
         medium_threats += 1
         print("-" * 123)
 
 
 def routing_protocol_rules():
+    """
+    Function for node routing protocol vulnerabilities.
+    :return:
+    """
     routing_rule_1 = rule_engine.Rule(
         'network_routing_protocols == ["LEACH"]'
     )
@@ -409,12 +524,16 @@ def routing_protocol_rules():
             print(*sensor['connected_sensors'], sep=', ')
             print()
 
-        cvss_calc('CVSS:3.0/S:C/C:L/I:L/A:H/AV:N/AC:H/PR:L/UI:R')
+        cvss_calc('CVSS:3.0/S:C/C:L/I:L/A:H/AV:N/AC:H/PR:L/UI:R/E:P/RL:W/RC:C')
         high_threats += 1
         print("-" * 123)
 
 
 def cve_2020_10757():
+    """
+    Function for the cve_2020_10757 vulnerability.
+    :return:
+    """
     node_rule_1 = rule_engine.Rule(
         'data_storage == true'
     )
@@ -485,7 +604,7 @@ def cve_2020_10757():
                     print(*sensor['connected_sensors'], sep=', ')
                     print()
 
-                cvss_calc('CVSS:3.0/S:U/C:H/I:H/A:H/AV:L/AC:L/PR:L/UI:R')
+                cvss_calc('CVSS:3.0/S:U/C:H/I:H/A:H/AV:L/AC:L/PR:L/UI:R/E:H/RL:O/RC:C')
                 high_threats += 1
                 print("-" * 123)
 
@@ -515,7 +634,7 @@ def cve_2020_10757():
                     print(*sensor['connected_sensors'], sep=', ')
                     print()
 
-                cvss_calc('CVSS:3.0/S:U/C:H/I:H/A:H/AV:L/AC:L/PR:L/UI:R')
+                cvss_calc('CVSS:3.0/S:U/C:H/I:H/A:H/AV:L/AC:L/PR:L/UI:R/E:H/RL:O/RC:C')
                 high_threats += 1
                 print("-" * 123)
 
@@ -542,7 +661,7 @@ def cve_2020_10757():
                     print(*sensor['connected_sensors'], sep=', ')
                     print()
 
-                cvss_calc('CVSS:3.0/S:U/C:H/I:H/A:H/AV:L/AC:L/PR:L/UI:R')
+                cvss_calc('CVSS:3.0/S:U/C:H/I:H/A:H/AV:L/AC:L/PR:L/UI:R/E:H/RL:O/RC:C')
                 high_threats += 1
                 print("-" * 123)
 
@@ -569,12 +688,16 @@ def cve_2020_10757():
                     print(*sensor['connected_sensors'], sep=', ')
                     print()
 
-                cvss_calc('CVSS:3.0/S:U/C:H/I:H/A:H/AV:L/AC:L/PR:L/UI:R')
+                cvss_calc('CVSS:3.0/S:U/C:H/I:H/A:H/AV:L/AC:L/PR:L/UI:R/E:H/RL:O/RC:C')
                 high_threats += 1
                 print("-" * 123)
 
 
 def log4j():
+    """
+    Function for the log4j vulnerability.
+    :return:
+    """
     log4j_rule = rule_engine.Rule(
         'dependencies == ["log4j"]'
     )
@@ -599,17 +722,23 @@ def log4j():
             print(*sensor['connected_sensors'], sep=', ')
             print()
 
-        cvss_calc('CVSS:3.0/S:C/C:H/I:H/A:H/AV:N/AC:L/PR:N/UI:N')
+        cvss_calc('CVSS:3.0/S:C/C:H/I:H/A:H/AV:N/AC:L/PR:N/UI:N/E:H/RL:O/RC:C')
         print("-" * 123)
         critical_threats += 1
 
 
 def authentication_rules():
+    """
+    Function for authentication protocols vulnerability.
+    :return:
+    """
     authentication_rule_1 = rule_engine.Rule(
-        'authentication == "LEAP"'
+        'authentication == ["LEAP"]'
     )
 
     filter_authentication_rule_1 = tuple(authentication_rule_1.filter(sensor_list))
+
+    global high_threats
 
     if filter_authentication_rule_1:
         print("-" * 123)
@@ -625,12 +754,16 @@ def authentication_rules():
             print(*sensor['connected_sensors'], sep=', ')
             print()
 
-        cvss_calc('CVSS:3.0/S:C/C:H/I:L/A:L/AV:N/AC:H/PR:N/UI:R')
-
+        cvss_calc('CVSS:3.0/S:C/C:H/I:L/A:L/AV:N/AC:H/PR:N/UI:R/E:P/RL:O/RC:C')
+        high_threats += 1
         print("-" * 123)
 
 
 def shared_resources():
+    """
+    Function for the shared resources vulnerabilities.
+    :return:
+    """
     shared_resources_rule_1 = rule_engine.Rule(
         'shared_resources == true'
     )
@@ -653,12 +786,16 @@ def shared_resources():
             print(*sensor['connected_sensors'], sep=', ')
             print()
 
-        cvss_calc('CVSS:3.0/S:C/C:H/I:L/A:L/AV:N/AC:H/PR:H/UI:N')
+        cvss_calc('CVSS:3.0/S:C/C:H/I:L/A:L/AV:N/AC:H/PR:H/UI:N/E:U/RL:W/RC:R')
         high_threats += 1
         print("-" * 123)
 
 
 def lorawan():
+    """
+    Function for the LoRaWAN vulnerabilities.
+    :return:
+    """
     lorawan_rule_1 = rule_engine.Rule(
         'connection_type == ["LoRaWAN"]'
     )
@@ -686,12 +823,16 @@ def lorawan():
             print(*sensor['connected_sensors'], sep=', ')
             print()
 
-        cvss_calc('CVSS:3.0/S:C/C:L/I:H/A:H/AV:N/AC:H/PR:L/UI:R')
+        cvss_calc('CVSS:3.0/S:C/C:L/I:H/A:H/AV:N/AC:H/PR:L/UI:R/E:P/RL:T/RC:R')
         high_threats += 1
         print("-" * 123)
 
 
 def encryption():
+    """
+    Function for the encryption vulnerabilities.
+    :return:
+    """
     encryption_rule_1 = rule_engine.Rule(
         'encryption == ["MD5"]'
     )
@@ -719,12 +860,16 @@ def encryption():
             print(*sensor['connected_sensors'], sep=', ')
             print()
 
-        cvss_calc('CVSS:3.0/S:U/C:H/I:L/A:L/AV:L/AC:L/PR:N/UI:R')
+        cvss_calc('CVSS:3.0/S:U/C:H/I:L/A:L/AV:L/AC:L/PR:N/UI:R/E:P/RL:O/RC:C')
         medium_threats += 1
         print("-" * 123)
 
 
 def cve_2021_38386():
+    """
+    Function for the Contiki vulnerabilities.
+    :return:
+    """
     cve_2021_38386_rule_1 = rule_engine.Rule(
         'operating_system == "Contiki"'
     )
@@ -759,12 +904,16 @@ def cve_2021_38386():
                 print(*sensor['connected_sensors'], sep=', ')
                 print()
 
-            cvss_calc('CVSS:3.0/S:U/C:L/I:L/A:L/AV:L/AC:H/PR:L/UI:R')
+            cvss_calc('CVSS:3.0/S:U/C:L/I:L/A:L/AV:L/AC:H/PR:L/UI:R/E:P/RL:O/RC:C')
             medium_threats += 1
             print("-" * 123)
 
 
 def cve_2014_0323():
+    """
+    Function for the cve_2014_0323 vulnerability.
+    :return:
+    """
     cve_2014_0323_rule_1 = rule_engine.Rule(
         'operating_system == "Windows"'
     )
@@ -817,7 +966,7 @@ def cve_2014_0323():
                 print(*sensor['connected_sensors'], sep=', ')
                 print()
 
-            cvss_calc('CVSS:3.0/S:U/C:H/I:L/A:H/AV:L/AC:H/PR:H/UI:R')
+            cvss_calc('CVSS:3.0/S:U/C:H/I:L/A:H/AV:L/AC:H/PR:H/UI:R/E:H/RL:O/RC:C')
             medium_threats += 1
             print("-" * 123)
 
@@ -841,7 +990,7 @@ def cve_2014_0323():
                 print(*sensor['connected_sensors'], sep=', ')
                 print()
 
-            cvss_calc('CVSS:3.0/S:U/C:H/I:L/A:H/AV:L/AC:H/PR:H/UI:R')
+            cvss_calc('CVSS:3.0/S:U/C:H/I:L/A:H/AV:L/AC:H/PR:H/UI:R/E:H/RL:O/RC:C')
             medium_threats += 1
             print("-" * 123)
 
@@ -865,7 +1014,7 @@ def cve_2014_0323():
                 print(*sensor['connected_sensors'], sep=', ')
                 print()
 
-            cvss_calc('CVSS:3.0/S:U/C:H/I:L/A:H/AV:L/AC:H/PR:H/UI:R')
+            cvss_calc('CVSS:3.0/S:U/C:H/I:L/A:H/AV:L/AC:H/PR:H/UI:R/E:H/RL:O/RC:C')
             medium_threats += 1
             print("-" * 123)
 
@@ -889,7 +1038,7 @@ def cve_2014_0323():
                 print(*sensor['connected_sensors'], sep=', ')
                 print()
 
-            cvss_calc('CVSS:3.0/S:U/C:H/I:L/A:H/AV:L/AC:H/PR:H/UI:R')
+            cvss_calc('CVSS:3.0/S:U/C:H/I:L/A:H/AV:L/AC:H/PR:H/UI:R/E:H/RL:O/RC:C')
             medium_threats += 1
             print("-" * 123)
 
@@ -913,21 +1062,27 @@ def cve_2014_0323():
                 print(*sensor['connected_sensors'], sep=', ')
                 print()
 
-            cvss_calc('CVSS:3.0/S:U/C:H/I:L/A:H/AV:L/AC:H/PR:H/UI:R')
+            cvss_calc('CVSS:3.0/S:U/C:H/I:L/A:H/AV:L/AC:H/PR:H/UI:R/E:H/RL:O/RC:C')
             medium_threats += 1
             print("-" * 123)
 
 
 def cve_2019_1489():
+    """
+    Function for the cve_2019_1489 vulnerability.
+    :return:
+    """
     cve_2019_1489_rule_1 = rule_engine.Rule(
         'operating_system == "Windows"'
     )
     filter_cve_2019_1489_rule_1 = tuple(cve_2019_1489_rule_1.filter(sensor_list))
 
     cve_2019_1489_rule_2 = rule_engine.Rule(
-        'operating_system == "XP"'
+        'software_version == "XP"'
     )
     filter_cve_2019_1489_rule_2 = tuple(cve_2019_1489_rule_2.filter(sensor_list))
+
+    global medium_threats
 
     if filter_cve_2019_1489_rule_1:
         if filter_cve_2019_1489_rule_2:
@@ -947,12 +1102,16 @@ def cve_2019_1489():
                 print(*sensor['connected_sensors'], sep=', ')
                 print()
 
-            cvss_calc('CVSS:3.0/S:U/C:H/I:L/A:H/AV:L/AC:H/PR:H/UI:R')
-
+            cvss_calc('CVSS:3.0/S:U/C:H/I:L/A:H/AV:L/AC:H/PR:H/UI:R/E:H/RL:O/RC:C')
+            medium_threats += 1
             print("-" * 123)
 
 
 def access_control():
+    """
+    Function for access control vulnerabilities.
+    :return:
+    """
     access_control_rule_1 = rule_engine.Rule(
         'access_control == false'
     )
@@ -980,12 +1139,16 @@ def access_control():
             print(*sensor['connected_sensors'], sep=', ')
             print()
 
-        cvss_calc('CVSS:3.0/S:C/C:H/I:L/A:L/AV:L/AC:L/PR:N/UI:R')
+        cvss_calc('CVSS:3.0/S:C/C:H/I:L/A:L/AV:L/AC:L/PR:N/UI:R/E:P/RL:O/RC:C')
         high_threats += 1
         print("-" * 123)
 
 
 def secure_key_storage():
+    """
+    Function for key storage vulnerabilities.
+    :return:
+    """
     secure_key_storage_rule_1 = rule_engine.Rule(
         'secure_key_storage == ["none"]'
     )
@@ -1016,12 +1179,16 @@ def secure_key_storage():
             print(*sensor['connected_sensors'], sep=', ')
             print()
 
-        cvss_calc('CVSS:3.0/S:C/C:H/I:H/A:L/AV:P/AC:L/PR:N/UI:R')
+        cvss_calc('CVSS:3.0/S:C/C:H/I:H/A:L/AV:P/AC:L/PR:N/UI:R/E:P/RL:O/RC:R')
         high_threats += 1
         print("-" * 123)
 
 
 def time_diversity():
+    """
+    Function for time diversity vulnerabilities.
+    :return:
+    """
     time_diversity_rule_1 = rule_engine.Rule(
         'time_diversity == false'
     )
@@ -1047,7 +1214,7 @@ def time_diversity():
             print(*sensor['connected_sensors'], sep=', ')
             print()
 
-        cvss_calc('CVSS:3.0/S:C/C:L/I:H/A:H/AV:N/AC:H/PR:H/UI:R')
+        cvss_calc('CVSS:3.0/S:C/C:L/I:H/A:H/AV:N/AC:H/PR:H/UI:R/E:P/RL:O/RC:R')
         high_threats += 1
         print("-" * 123)
 
@@ -1056,6 +1223,9 @@ def time_diversity():
 
 
 class Redirect:
+    """
+    Class for redirecting stdout
+    """
 
     def __init__(self, widget):
         self.widget = widget
@@ -1063,34 +1233,39 @@ class Redirect:
 
     def write(self, text):
         self.widget.insert('end', text)
-        # self.widget.see('end') # autoscroll
-
-
-def pdf_gen():
-    file_path = 'randomfile.txt'
-    sys.stdout = open(file_path, "w")
 
 
 def hide(x):
+    """
+    Function to hide widgets on the grid
+    :param x:
+    :return:
+    """
     x.grid_remove()
-
-
-def show_end(event):
-    text.see(tk.END)
-    text.edit_modified(0)  # IMPORTANT - or <<Modified>> will not be called later.
 
 
 # --------------- data ingest--------------------
 
-
+# stores all sensor data
 sensor_list = []
 
+# root window of UI
 root = tk.Tk()
 root.title('WSN Threat Modeller')
-root.geometry('1075x500')
-
+# root geometry (size of UI)
+root.geometry('755x650')
 
 def open_file():
+    """
+    Function to open computer file directory GUI in order to select
+    file containing the sensor data.
+
+    Checks to make sure that the file that is uploaded is .txt.
+
+    Then iterates through all data in the file in order to add them to the
+    sensor_list. Parses JSON data to the validator.
+    :return:
+    """
     file_path = askopenfile(mode='r', filetypes=[('Text File', '*txt')])
     if file_path is not None:
         pass
@@ -1104,51 +1279,49 @@ def open_file():
 
     # ---------------------- UI ------------------------
 
+    # Progress bar when uploading the text file
     pb1 = Progressbar(
         root,
         orient=HORIZONTAL,
         length=300,
         mode='determinate'
     )
-    pb1.grid(row=1, column=7, columnspan=1, pady=20)
-    for i in range(5):
+    pb1.grid(row=1, column=2, columnspan=1, pady=20)
+    for i in range(4):
         root.update_idletasks()
         pb1['value'] += 20
         time.sleep(0.5)
     pb1.destroy()
-    Label(root, text='File Uploaded Successfully!', foreground='green').grid(row=1, column=7, columnspan=1, pady=10)
+    Label(root, text='File Uploaded Successfully!', foreground='green').grid(row=1, column=2, columnspan=1, pady=10)
 
 
-welcome_label = Label(
+img = PhotoImage(file='/Users/adambassett/IdeaProjects/ThreatModel/WSN_LOGO.png')
+img_label = tk.Label(root, image=img)
+img_label.grid(row=0, column=2, columnspan=2)
+
+json_label = tk.Label(
     root,
-    text="Welcome to WSN Threat Modeller"
+    text='Upload JSON in .txt format',
 )
-welcome_label.grid(row=0, column=1, columnspan=3, pady=10)
+json_label.grid(row=1, column=2, pady=0, columnspan=1)
 
-json_label = Label(
-    root,
-    text='Upload JSON in .txt format '
-)
-json_label.grid(row=1, column=7)
-
-json_button = Button(
+json_button = tk.Button(
     root,
     text='Choose File',
     command=lambda: open_file()
 )
-json_button.grid(row=1, column=8)
+json_button.grid(row=1, column=3, padx=0, columnspan=1)
 
 text = tk.Text(root,
-               bg="white",
-               fg="black",
-               font=("Calibri",
-                     12, "bold"),
+               bg='#fffff4',
+               fg='black',
+               font=('Calibri',
+                     12, 'bold'),
                borderwidth=4,
                relief='ridge')
-text.grid(row=1, columnspan=2)
+text.grid(row=2, columnspan=2, column=2, padx=10)
 
 analyse = tk.Button(root, text='Analyse', command=lambda: [
-    introduction(),
     node_capturing_rules(),
     anti_tamper_rules(),
     battery_information_rule(),
@@ -1163,18 +1336,19 @@ analyse = tk.Button(root, text='Analyse', command=lambda: [
     encryption(),
     cve_2021_38386(),
     cve_2014_0323(),
-    cve_2019_1489(),
     access_control(),
     secure_key_storage(),
     time_diversity(),
-    threat_counter(),
+    authentication_rules(),
+    cve_2019_1489(),
+    threat_counter_summary(),
     text.see(tk.END)
 ])
 
-analyse.grid(row=2, column=0, columnspan=2, pady=10)
+analyse.grid(row=3, column=2, columnspan=2, pady=10)
 
-pdf = tk.Button(root, text='PDF Report', command=pdf_gen())
-pdf.grid(row=3, column=0, columnspan=2)
+pdf = tk.Button(root, text='PDF Report')
+pdf.grid(row=4, column=2, columnspan=2)
 
 old_stdout = sys.stdout
 sys.stdout = Redirect(text)
@@ -1182,3 +1356,4 @@ sys.stdout = Redirect(text)
 root.mainloop()
 
 sys.stdout = old_stdout
+

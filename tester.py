@@ -16,13 +16,13 @@ from cvss import CVSS3
 
 def cvss_calc(vector):
     print()
-    print("Vulnerability Level:")
+    print("Vulnerability level:")
     print()
     c = CVSS3(vector)
     print(c.clean_vector())
     print("Base vulnerability score: ", c.base_score)
     sev = c.severities()
-    print("Vulnerability Level: ", sev[0])
+    print("Vulnerability level: ", sev[0])
 
 
 def source_schema():
