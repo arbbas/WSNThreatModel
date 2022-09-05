@@ -107,7 +107,8 @@
                     "SPINS",
                     "LEAP",
                     "EIBAS",
-                    "LOCHA"
+                    "LOCHA",
+                    "none"
                 ]
             },
             "uniqueItems": true

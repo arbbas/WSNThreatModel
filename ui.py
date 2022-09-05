@@ -11,6 +11,7 @@ from jsonschema import Draft202012Validator
 import rule_engine
 from cvss import CVSS3
 
+
 # --------------- threat calculations --------------------
 
 # int variables to store the amount of threats in each threat category
@@ -19,6 +20,7 @@ high_threats = 0
 medium_threats = 0
 low_threats = 0
 
+sensors_on_network = 0
 
 def threat_counter_summary():
     """
@@ -77,13 +79,12 @@ def threat_counter_summary():
     print("\tMedium threat count: {0}".format(medium_threats))
     print("\tLow threat count: {0}".format(low_threats))
     print()
+    print("Sensors on network: {}".format(sensors_on_network))
+    print()
     print("Thank you for using WSN Threat Modelling Tool. Please address the {0} critical threat(s) and {1} high"
           " threat(s) as soon as \npossible.".format(critical_threats, high_threats))
     print()
-    print("""Please refer to documentation for report data ingest format. Documentation can be found here:
-    
-    \t\t                   https://github.com/arbbas/WSNThreatModel""")
-    print()
+    print("""Documentation can be found here: https://github.com/arbbas/WSNThreatModel""")
     print()
     print("Threat highlights:")
     if filter_node_rule_1:
@@ -1227,6 +1228,22 @@ def time_diversity():
         print("-" * 123)
 
 
+def sybil_attack():
+
+    sybil_vulnerable_sensors = 0
+
+    sybil_attack_rule_1 = rule_engine.Rule(
+        'authentication == ["none"]'
+    )
+    filter_sybil_attack_rule_1 = tuple(sybil_attack_rule_1.filter(sensor_list))
+
+    if filter_sybil_attack_rule_1:
+        for sensor in filter_sybil_attack_rule_1:
+            sybil_vulnerable_sensors += 1
+
+    if sybil_vulnerable_sensors > sensors_on_network / 2:
+        print("-" * 123)
+        print("Sybil be coming")
 # --------------- stdout redirect --------------------
 
 
@@ -1252,16 +1269,23 @@ def hide(x):
     x.grid_remove()
 
 
-# --------------- data ingest--------------------
+def open_new_window():
+    new_window = tk.Tk()
+    new_window.title('WSN Threat Modeller Help')
+    new_window.geometry('755x650')
 
-# stores all sensor data
-sensor_list = []
 
 # root window of UI
 root = tk.Tk()
 root.title('WSN Threat Modeller')
 # root geometry (size of UI)
 root.geometry('755x650')
+
+# --------------- data ingest--------------------
+
+# stores all sensor data
+sensor_list = []
+
 
 def open_file():
     """
@@ -1274,12 +1298,16 @@ def open_file():
     sensor_list. Parses JSON data to the validator.
     :return:
     """
+    
+    global sensors_on_network
+    
     file_path = askopenfile(mode='r', filetypes=[('Text File', '*txt')])
     if file_path is not None:
         pass
     for jsonObj in file_path:
         sensor_dict = json.loads(jsonObj)
         sensor_list.append(sensor_dict)
+        sensors_on_network += 1
 
     # informs if JSON parsed is valid and will print issues if not
     isValid, msg = validate_json(sensor_dict)
@@ -1294,7 +1322,7 @@ def open_file():
         length=300,
         mode='determinate'
     )
-    pb1.grid(row=1, column=2, columnspan=1, pady=20)
+    pb1.grid(row=1, column=2, columnspan=1, padx=30)
     for i in range(4):
         root.update_idletasks()
         pb1['value'] += 20
@@ -1302,23 +1330,27 @@ def open_file():
     pb1.destroy()
     Label(root, text='File Uploaded Successfully!', foreground='green').grid(row=1, column=2, columnspan=1, pady=10)
 
-
 img = PhotoImage(file='/Users/adambassett/IdeaProjects/ThreatModel/WSN_LOGO.png')
 img_label = tk.Label(root, image=img)
 img_label.grid(row=0, column=2, columnspan=2)
+
+help_button = tk.Button(root,
+                        text="Help",
+                        command=lambda: open_new_window())
+help_button.grid(row=4, column=1, columnspan=2)
 
 json_label = tk.Label(
     root,
     text='Upload JSON in .txt format',
 )
-json_label.grid(row=1, column=2, pady=0, columnspan=1)
+json_label.grid(row=1, column=1, pady=20, columnspan=2)
 
 json_button = tk.Button(
     root,
     text='Choose File',
     command=lambda: open_file()
 )
-json_button.grid(row=1, column=3, padx=0, columnspan=1)
+json_button.grid(row=1, column=2, columnspan=2)
 
 text = tk.Text(root,
                bg='#fffff4',
@@ -1349,6 +1381,7 @@ analyse = tk.Button(root, text='Analyse', command=lambda: [
     time_diversity(),
     authentication_rules(),
     cve_2019_1489(),
+    sybil_attack(),
     threat_counter_summary(),
     text.see(tk.END)
 ])
@@ -1364,4 +1397,3 @@ sys.stdout = Redirect(text)
 root.mainloop()
 
 sys.stdout = old_stdout
-

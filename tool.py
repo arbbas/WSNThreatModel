@@ -1,4 +1,6 @@
 import json
+import timeit
+
 import jsonschema
 from jsonschema import validate
 from jsonschema import Draft202012Validator
@@ -55,7 +57,6 @@ with open('input.txt', 'r', encoding='utf-8') as inp:
         sensor_dict = json.loads(jsonObj)
         sensor_list.append(sensor_dict)
     print(sensor_list)
-
 
 # informs if JSON parsed is valid and will print issues if not
 isValid, msg = validate_json(sensor_dict)
@@ -532,6 +533,7 @@ def authentication_rules():
         print("-" * 123)
 
 
+begin_time = timeit.default_timer()
 node_capturing_rules()
 anti_tamper_rules()
 battery_information_rule()
@@ -541,3 +543,8 @@ routing_protocol_rules()
 cve_2020_10757()
 log4j()
 communication_rules()
+end_time = timeit.default_timer()
+
+total_time = end_time - begin_time
+
+print(total_time)
