@@ -11,7 +11,6 @@ from jsonschema import Draft202012Validator
 import rule_engine
 from cvss import CVSS3
 
-
 # --------------- threat calculations --------------------
 
 # int variables to store the amount of threats in each threat category
@@ -21,6 +20,7 @@ medium_threats = 0
 low_threats = 0
 
 sensors_on_network = 0
+
 
 def threat_counter_summary():
     """
@@ -1229,6 +1229,7 @@ def time_diversity():
 
 
 def sybil_attack():
+    global high_threats
 
     sybil_vulnerable_sensors = 0
 
@@ -1243,7 +1244,23 @@ def sybil_attack():
 
     if sybil_vulnerable_sensors > sensors_on_network / 2:
         print("-" * 123)
-        print("Sybil be coming")
+        print("Sensor vulnerability found: Over half the sensors on the network have no authentication.")
+        print("*" * 20)
+        print("Threat: Sybil attack possible.")
+        print("*" * 20)
+        print("Control: Please apply authentication measures to all sensors.")
+        print("*" * 20)
+        for sensor in filter_sybil_attack_rule_1:
+            print("Affected Sensor: ", *sensor['sensor_id'])
+            print("Connected sensors to sensor {0} that may be at risk:".format(*sensor['sensor_id']), end=' ')
+            print(*sensor['connected_sensors'], sep=', ')
+            print()
+
+        cvss_calc('CVSS:3.0/S:C/C:L/I:H/A:H/AV:N/AC:H/PR:H/UI:R/E:P/RL:O/RC:R')
+        high_threats += 1
+        print("-" * 123)
+
+
 # --------------- stdout redirect --------------------
 
 
@@ -1298,9 +1315,9 @@ def open_file():
     sensor_list. Parses JSON data to the validator.
     :return:
     """
-    
+
     global sensors_on_network
-    
+
     file_path = askopenfile(mode='r', filetypes=[('Text File', '*txt')])
     if file_path is not None:
         pass
@@ -1322,13 +1339,14 @@ def open_file():
         length=300,
         mode='determinate'
     )
-    pb1.grid(row=1, column=2, columnspan=1, padx=30)
+    pb1.grid(row=1, column=1, columnspan=2, padx=30)
     for i in range(4):
         root.update_idletasks()
         pb1['value'] += 20
         time.sleep(0.5)
     pb1.destroy()
     Label(root, text='File Uploaded Successfully!', foreground='green').grid(row=1, column=2, columnspan=1, pady=10)
+
 
 img = PhotoImage(file='/Users/adambassett/IdeaProjects/ThreatModel/WSN_LOGO.png')
 img_label = tk.Label(root, image=img)
