@@ -31,7 +31,8 @@ def threat_counter_summary():
     """
 
     threats = ["\tNode Capturing", "\tDenial of Service", "\tCollision", "\tResource Drainage", "\tJamming",
-               "\tHELLO Flood", "\tInformation Disclosure", "\tEavesdropping", "\tCompromised Packet Integrity"]
+               "\tHELLO Flood", "\tInformation Disclosure", "\tEavesdropping", "\tCompromised Packet Integrity", 
+               "\tSybil Attack"] 
 
     node_rule_1 = rule_engine.Rule(
         'data_storage == true'
@@ -73,6 +74,11 @@ def threat_counter_summary():
     )
     filter_time_diversity_rule_1 = tuple(time_diversity_rule_1.filter(sensor_list))
 
+    sybil_attack_rule_1 = rule_engine.Rule(
+        'authentication == ["none"]'
+    )
+    filter_sybil_attack_rule_1 = tuple(sybil_attack_rule_1.filter(sensor_list))
+
     print("Threat count summary:")
     print("\tCritical threat count: {0}".format(critical_threats))
     print("\tHigh threat count: {0}".format(high_threats))
@@ -101,6 +107,8 @@ def threat_counter_summary():
         print(threats[5])
     if filter_time_diversity_rule_1:
         print(threats[8])
+    if filter_sybil_attack_rule_1:
+        print(threats[9])
     print("\t\t\tPlease scroll up to read the full report.")
 
 

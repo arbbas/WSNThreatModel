@@ -1,1 +1,2 @@
-# WSNThreatModel
+# WSN Threat Modeller
+
