@@ -133,7 +133,7 @@ def cvss_calc(vector):
     print("Vulnerability level with control: ", sev[1])
 
 
-# --------------- JSON functions --------------------
+# --------------- JSON validation --------------------
 
 
 def source_schema():
@@ -1347,7 +1347,7 @@ def open_file():
         length=300,
         mode='determinate'
     )
-    pb1.grid(row=1, column=1, columnspan=2, padx=30)
+    pb1.grid(row=2, column=2, columnspan=2, padx=30)
     for i in range(4):
         root.update_idletasks()
         pb1['value'] += 20
