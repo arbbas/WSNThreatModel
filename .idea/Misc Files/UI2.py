@@ -1,15 +1,10 @@
-import json
 import tkinter as tk
-import time
-from tkinter import ttk, HORIZONTAL
-from tkinter import *
+from tkinter import ttk
 from tkinter.filedialog import askopenfile
-from tkinter.ttk import Progressbar
 import json
 import jsonschema
 from jsonschema import validate
 from jsonschema import Draft202012Validator
-import rule_engine
 from cvss import CVSS3
 from tool import *
 
@@ -32,7 +27,7 @@ def source_schema():
     """ _summary_
     A function to load the schema.
     """
-    with open('tool_schema_unnested.json', 'r', encoding='utf-8') as schema:
+    with open('../../tool_schema_unnested.json', 'r', encoding='utf-8') as schema:
         schema = json.load(schema)
     return schema
 

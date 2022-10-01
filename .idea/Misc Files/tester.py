@@ -29,7 +29,7 @@ def source_schema():
     """ _summary_
     A function to load the schema.
     """
-    with open('tool_schema_unnested.json', 'r', encoding='utf-8') as schema:
+    with open('../../tool_schema_unnested.json', 'r', encoding='utf-8') as schema:
         schema = json.load(schema)
     return schema
 
