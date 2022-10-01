@@ -1295,9 +1295,11 @@ def hide(x):
 
 
 def open_new_window():
-    new_window = tk.Tk()
+    new_window = Toplevel(root)
     new_window.title('WSN Threat Modeller Help')
-    new_window.geometry('755x650')
+    new_window.geometry('340x50')
+    help_label = tk.Label(new_window, text="https://github.com/arbbas/WSNThreatModel#readme")
+    help_label.grid(row=1, column=2)
 
 
 # root window of UI
