@@ -52,14 +52,14 @@ def validate_json(json_data):
 sensor_list = []  # contains list of sensors appended from dict below
 
 # opens input and loops through the dict objects before appending to list
-with open('input.txt', 'r', encoding='utf-8') as inp:
+with open('/Users/adambassett/Dropbox/Mac/Desktop/input.txt', 'r', encoding='utf-8') as inp:
     for jsonObj in inp:
         sensor_dict = json.loads(jsonObj)
         sensor_list.append(sensor_dict)
     print(sensor_list)
 
 # informs if JSON parsed is valid and will print issues if not
-isValid, msg = validate_json(sensor_dict)
+isValid, msg = validate_json(sensor_list)
 print(msg)
 
 critical_threats = 0

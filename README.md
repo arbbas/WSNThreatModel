@@ -25,7 +25,7 @@ of the config file has the issue.
 Please then click analyse to generate the report. The report will contain 
 a summary along with identified threats within your system model.
 
-# Threat template
+# Data Model Template
 
 Below is the modelling template. Each field relates to JSON data. There is a 
 JSON Schema within the project to refer to when building the model for data types 

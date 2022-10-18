@@ -1105,7 +1105,7 @@ def cve_2019_1489():
         if filter_cve_2019_1489_rule_2:
             print("-" * 123)
             print("Sensor vulnerability found: An information disclosure vulnerability exists when the Windows Remote "
-                  "Desktop Protocol (RDP)\n fails to properly handle objects in memory, aka 'Remote Desktop Protocol "
+                  "Desktop Protocol (RDP) fails to properly handle objects in memory, aka 'Remote Desktop Protocol "
                   "Information Disclosure Vulnerability'.")
             print("*" * 20)
             print("Threat: There is considerable informational disclosure.")
@@ -1365,7 +1365,7 @@ img_label.grid(row=0, column=2, columnspan=2)
 help_button = tk.Button(root,
                         text="Help",
                         command=lambda: open_new_window())
-help_button.grid(row=4, column=1, columnspan=2)
+help_button.grid(row=4, column=2, columnspan=2)
 
 json_label = tk.Label(
     root,
@@ -1416,8 +1416,8 @@ analyse = tk.Button(root, text='Analyse', command=lambda: [
 
 analyse.grid(row=3, column=2, columnspan=2, pady=10)
 
-pdf = tk.Button(root, text='PDF Report')
-pdf.grid(row=4, column=2, columnspan=2)
+# pdf = tk.Button(root, text='PDF Report')
+# pdf.grid(row=4, column=2, columnspan=2)
 
 old_stdout = sys.stdout
 sys.stdout = Redirect(text)
